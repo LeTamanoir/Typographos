@@ -9,7 +9,7 @@ use ReflectionException;
 use RuntimeException;
 use Typographos\Dto\GenCtx;
 use Typographos\Dto\RenderCtx;
-use Typographos\Dto\RootNamespaceType;
+use Typographos\Dto\RootType;
 
 final class Generator
 {
@@ -79,11 +79,7 @@ final class Generator
      * Generate TypeScript types from the given class names
      * and write them to the file specified in the generator
      *
-     * @param  array<class-string>  $classNames
-     *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws ReflectionException
+     * @param  class-string[]  $classNames
      */
     public function generate(array $classNames = []): void
     {
@@ -101,7 +97,7 @@ final class Generator
             parentProperty: null,
         );
 
-        $root = RootNamespaceType::from($genCtx);
+        $root = RootType::from($genCtx);
 
         $renderCtx = new RenderCtx(
             indent: $this->indent,

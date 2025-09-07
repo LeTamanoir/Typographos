@@ -18,7 +18,7 @@
         "php": "^8.4"
     },
     "require-dev": {
-        "carthage-software/mago": "1.0.0-beta.10",
+        "carthage-software/mago": "1.0.0-beta.12",
         "pestphp/pest": "^3.8",
         "symfony/var-dumper": "^7.3"
     },

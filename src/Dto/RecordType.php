@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
-use InvalidArgumentException;
 use Override;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionProperty;
 use Typographos\Interfaces\TypeScriptTypeInterface;
-use Typographos\Traits\HasPropertiesTrait;
 use Typographos\TypeConverter;
 use Typographos\TypeResolver;
 use Typographos\Utils;
@@ -18,18 +15,21 @@ use Typographos\Utils;
 final class RecordType implements TypeScriptTypeInterface
 {
     /**
-     * @use HasPropertiesTrait<TypeScriptTypeInterface>
+     * @var array<string, TypeScriptTypeInterface>
      */
-    use HasPropertiesTrait;
+    private array $properties = [];
 
     public function __construct(
         public string $name,
     ) {}
 
-    /**
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     */
+    public function addProperty(string $propertyKey, TypeScriptTypeInterface $property): self
+    {
+        $this->properties[$propertyKey] = $property;
+
+        return $this;
+    }
+
     public static function from(GenCtx $ctx, string $className): self
     {
         $ref = new ReflectionClass($className);

@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
-/**
- * ArrayKind represents the kind of an array.
- *
- * @internal
- */
 enum ArrayKind
 {
     case List;

@@ -24,17 +24,6 @@ final class ArrayType implements TypeScriptTypeInterface
         return $this->kind->render($this->inner->render($ctx));
     }
 
-    /**
-     * Create ArrayType from PHPDoc array notation
-     *
-     * Supported formats:
-     * - list<T> → T[]
-     * - non-empty-list<T> → [T, ...T[]]
-     * - array<K,V> → V[] or { [key: string]: V }
-     *
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     */
     public static function from(GenCtx $ctx, string $type): self
     {
         // Parse generic array notation
@@ -55,9 +44,6 @@ final class ArrayType implements TypeScriptTypeInterface
 
     /**
      * Create list<T> array type
-     * 
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
      */
     private static function createList(GenCtx $ctx, string $typeArgs, string $originalType): self
     {
@@ -73,9 +59,6 @@ final class ArrayType implements TypeScriptTypeInterface
 
     /**
      * Create non-empty-list<T> array type
-     * 
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
      */
     private static function createNonEmptyList(GenCtx $ctx, string $typeArgs, string $originalType): self
     {
@@ -91,9 +74,6 @@ final class ArrayType implements TypeScriptTypeInterface
 
     /**
      * Create array<K,V> type with key-value pairs
-     * 
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
      */
     private static function createArray(GenCtx $ctx, string $typeArgs, string $originalType): self
     {

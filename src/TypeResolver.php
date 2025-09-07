@@ -11,8 +11,6 @@ final class TypeResolver
 {
     /**
      * Resolve PHP type string, handling special cases like array, self, parent
-     *
-     * @throws InvalidArgumentException
      */
     public static function resolve(ReflectionProperty $prop): string
     {
@@ -46,8 +44,6 @@ final class TypeResolver
 
     /**
      * Handle special PHP types that need transformation
-     * 
-     * @throws InvalidArgumentException
      */
     private static function resolveType(string $type, ReflectionProperty $prop): string
     {
@@ -65,8 +61,6 @@ final class TypeResolver
      * Searches for array type information in two locations:
      * 1. Property-level @var docblock
      * 2. Constructor @param docblock
-     * 
-     * @throws InvalidArgumentException
      */
     private static function resolveArrayType(ReflectionProperty $prop): string
     {
@@ -128,8 +122,6 @@ final class TypeResolver
 
     /**
      * Resolve parent type reference
-     *
-     * @throws InvalidArgumentException
      */
     private static function resolveParentType(ReflectionProperty $prop): string
     {

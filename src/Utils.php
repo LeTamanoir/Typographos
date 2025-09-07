@@ -127,7 +127,9 @@ final class Utils
                 continue;
             }
             if ($ch === '>') {
-                $depth = max(0, $depth - 1);
+                if ($depth > 0) {
+                    $depth--;
+                }
                 $buf .= $ch;
                 continue;
             }

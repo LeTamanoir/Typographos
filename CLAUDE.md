@@ -32,7 +32,7 @@ The library models TypeScript types through a hierarchy in `src/Dto/`:
 - `RecordType`: Object/interface types generated from PHP classes
 - `ReferenceType`: References to user-defined classes
 - `RawType`: Custom raw TypeScript code from type replacements
-- `NamespaceType`/`RootNamespaceType`: Namespace organization
+- `NamespaceType`/`RootType`: Namespace organization
 
 ### Key Features
 - **Attribute-driven discovery**: Classes marked with `#[TypeScript]` are auto-discovered
@@ -44,7 +44,7 @@ The library models TypeScript types through a hierarchy in `src/Dto/`:
 ### Processing Flow
 1. **Discovery**: `ClassDiscovery` finds classes marked with `#[TypeScript]` attribute
 2. **Context Creation**: `GenCtx` is created with the queue, type replacements, and parent property
-3. **Namespace Building**: `RootNamespaceType::from()` processes the queue and builds the namespace hierarchy
+3. **Namespace Building**: `RootType::from()` processes the queue and builds the namespace hierarchy
 4. **Type Resolution**: `TypeResolver` handles special PHP types (array, self, parent, unions) 
 5. **Type Conversion**: `TypeConverter::convert()` maps resolved PHP types to TypeScript type objects
 6. **Rendering**: Generate final TypeScript with proper indentation and namespacing

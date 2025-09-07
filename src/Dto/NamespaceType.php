@@ -6,14 +6,18 @@ namespace Typographos\Dto;
 
 use Override;
 use Typographos\Interfaces\TypeScriptTypeInterface;
-use Typographos\Traits\HasChildrenTrait;
 
 final class NamespaceType implements TypeScriptTypeInterface
 {
     /**
-     * @use HasChildrenTrait<NamespaceType|RecordType>
+     * @var array<string, NamespaceType>
      */
-    use HasChildrenTrait;
+    public array $namespaces = [];
+
+    /**
+     * @var array<string, RecordType>
+     */
+    public array $records = [];
 
     public function __construct(
         public string $name,
@@ -28,8 +32,12 @@ final class NamespaceType implements TypeScriptTypeInterface
 
         $ts = $indent . $declaration . ' ' . $this->name . " {\n";
 
-        foreach ($this->children as $child) {
-            $ts .= $child->render($ctx->increaseDepth());
+        foreach ($this->namespaces as $ns) {
+            $ts .= $ns->render($ctx->increaseDepth());
+        }
+
+        foreach ($this->records as $rec) {
+            $ts .= $rec->render($ctx->increaseDepth());
         }
 
         $ts .= $indent . "}\n";

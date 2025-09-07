@@ -18,14 +18,17 @@ use Typographos\Utils;
 final class InlineRecordType implements TypeScriptTypeInterface
 {
     /**
-     * @use HasPropertiesTrait<TypeScriptTypeInterface>
+     * @var array<string, TypeScriptTypeInterface>
      */
-    use HasPropertiesTrait;
+    private array $properties = [];
 
-    /**
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     */
+    public function addProperty(string $propertyKey, TypeScriptTypeInterface $property): self
+    {
+        $this->properties[$propertyKey] = $property;
+
+        return $this;
+    }
+
     public static function from(GenCtx $ctx, string $className): self
     {
         $ref = new ReflectionClass($className);

@@ -23,8 +23,6 @@ final class ClassDiscovery
      * with this attribute are included in the result.
      *
      * @return class-string[]
-     * @throws RuntimeException
-     * @throws ReflectionException
      */
     public static function discover(string $dir): array
     {

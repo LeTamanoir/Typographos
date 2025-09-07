@@ -6,23 +6,12 @@ namespace Typographos\Dto;
 
 use InvalidArgumentException;
 
-/**
- * ArrayKeyType represents the type of the key of an array.
- *
- * @internal
- */
 enum ArrayKeyType
 {
     case Int;
     case String;
     case Both;
 
-    /**
-     * Create ArrayKeyType from PHPDoc type string
-     *
-     * Supports union types like 'int|string' and specialized types
-     * like 'positive-int', 'non-empty-string', etc.
-     */
     public static function from(string $type): self
     {
         $keys = array_map(trim(...), explode('|', trim($type)));
