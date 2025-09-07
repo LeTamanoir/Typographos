@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
-use InvalidArgumentException;
+use Typographos\Exceptions\InvalidArgumentException;
 
 enum ArrayKeyType
 {
@@ -12,7 +12,7 @@ enum ArrayKeyType
     case String;
     case Both;
 
-    public static function from(string $type): self
+    public static function from(GenCtx $ctx, string $type): self
     {
         $keys = array_map(trim(...), explode('|', trim($type)));
 
@@ -29,7 +29,7 @@ enum ArrayKeyType
                 'class-string',
                 'literal-string', => self::String,
                 'array-key' => self::Both,
-                default => throw new InvalidArgumentException("Unsupported array key type [{$key}]"),
+                default => throw InvalidArgumentException::fromCtx($ctx, "Unsupported array key type [{$key}]"),
             };
 
             if ($keyType === self::Both) {

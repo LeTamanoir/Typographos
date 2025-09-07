@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Typographos;
 
-use InvalidArgumentException;
 use ReflectionProperty;
+use Typographos\Exceptions\InvalidArgumentException;
 
 final class TypeResolver
 {
@@ -21,7 +21,7 @@ final class TypeResolver
         }
 
         if (str_contains($type, '&')) {
-            throw new InvalidArgumentException('Intersection types are not supported');
+            throw InvalidArgumentException::fromProp($prop, 'Intersection types are not supported');
         }
 
         // nullable starting with `?` can't be unioned
@@ -74,7 +74,8 @@ final class TypeResolver
             if ($arrayType !== null) {
                 return $arrayType;
             }
-            throw new InvalidArgumentException("Malformed PHPDoc [{$doc}] {$errorContext}");
+
+            throw InvalidArgumentException::fromProp($prop, "Malformed PHPDoc [{$doc}] {$errorContext}");
         }
 
         // Fall back to constructor @param docblock
@@ -84,10 +85,10 @@ final class TypeResolver
             if ($arrayType !== null) {
                 return $arrayType;
             }
-            throw new InvalidArgumentException("Malformed PHPDoc [{$constructorDoc}] {$errorContext}");
+            throw InvalidArgumentException::fromProp($prop, "Malformed PHPDoc [{$constructorDoc}] {$errorContext}");
         }
 
-        throw new InvalidArgumentException("Missing doc comment {$errorContext}");
+        throw InvalidArgumentException::fromProp($prop, "Missing doc comment {$errorContext}");
     }
 
     /**
@@ -130,8 +131,8 @@ final class TypeResolver
 
         while ($type === 'parent') {
             $type = get_parent_class($currentClass);
-            if (! $type) {
-                throw new InvalidArgumentException('Parent class not found for '.$currentClass);
+            if (!$type) {
+                throw InvalidArgumentException::fromProp($prop, 'Parent class not found for ' . $currentClass);
             }
             $currentClass = $type;
         }

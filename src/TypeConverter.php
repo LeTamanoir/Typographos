@@ -67,7 +67,7 @@ final class TypeConverter
 
         // handle built-in types
         if (Utils::isBuiltinType($type)) {
-            $ts = Utils::isArrayType($type) ? ArrayType::from($ctx, $type) : ScalarType::from($type);
+            $ts = Utils::isArrayType($type) ? ArrayType::from($ctx, $type) : ScalarType::from($ctx, $type);
 
             if ($allowsNull && $type !== 'null' && $type !== 'mixed') {
                 return new UnionType([$ts, ScalarType::null]);

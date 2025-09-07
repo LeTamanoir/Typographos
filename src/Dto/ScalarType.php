@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
-use InvalidArgumentException;
 use Override;
+use Typographos\Exceptions\InvalidArgumentException;
 use Typographos\Interfaces\TypeScriptTypeInterface;
 
 enum ScalarType implements TypeScriptTypeInterface
@@ -22,7 +22,7 @@ enum ScalarType implements TypeScriptTypeInterface
     case any;
     case never;
 
-    public static function from(string $phpScalar): self
+    public static function from(GenCtx $ctx, string $phpScalar): self
     {
         return match ($phpScalar) {
             'int', 'float' => self::number,
@@ -33,7 +33,7 @@ enum ScalarType implements TypeScriptTypeInterface
             'null' => self::null,
             'true' => self::true,
             'false' => self::false,
-            default => throw new InvalidArgumentException('Unsupported scalar type '.$phpScalar),
+            default => throw InvalidArgumentException::fromCtx($ctx, 'Unsupported scalar type ' . $phpScalar),
         };
     }
 
