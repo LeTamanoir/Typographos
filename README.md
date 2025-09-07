@@ -1,4 +1,4 @@
-<h1 align="center">🏛️ Typographos 🏛️</h1>
+# 🏛️ Typographos 🏛️
 
 Generate TS types from your PHP classes.
 
