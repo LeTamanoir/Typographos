@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Testing**: `composer test` (uses Pest)
 - **Test Coverage**: `composer test-coverage`
-- **Linting/Formatting**: Uses Mago
-- **Static Analysis**: Uses Mago
+- **Linting**: `composer lint` (uses Mago)
+- **Formatting**: `composer format` (uses Mago)
 
 ## Architecture
 

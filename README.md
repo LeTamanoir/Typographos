@@ -1,6 +1,8 @@
 # Typographos
 
-Generate TypeScript types from your PHP Data Transfer Objects (DTOs).
+Generate TS types from your PHP classes.
+
+> ⚠️ **Early Development**: This package is in extremely early development and is not yet available on Packagist.
 
 <!-- Packagist badges (uncomment after publishing) -->
 <!-- [![Latest Version on Packagist](https://img.shields.io/packagist/v/letamanoir/typographos.svg?style=flat-square)](https://packagist.org/packages/letamanoir/typographos) -->
@@ -245,6 +247,9 @@ Common exceptions you might see:
 
 ```bash
 composer test
+composer test-coverage  # With coverage
+composer lint          # Static analysis
+composer format        # Code formatting
 ```
 
 ## Changelog
