@@ -22,7 +22,7 @@ final class RootType implements TypeScriptTypeInterface
 
     public static function from(GenCtx $ctx): self
     {
-        $root = new self;
+        $root = new self();
 
         // process all classes in queue (queue may grow during processing)
         while ($className = $ctx->queue->shift()) {
@@ -43,7 +43,7 @@ final class RootType implements TypeScriptTypeInterface
 
         $node = &$this;
         foreach ($parts as $part) {
-            if (! isset($node->namespaces[$part])) {
+            if (!isset($node->namespaces[$part])) {
                 $node->namespaces[$part] = new NamespaceType($part);
             }
             $node = &$node->namespaces[$part];

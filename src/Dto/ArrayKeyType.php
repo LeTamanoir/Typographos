@@ -27,7 +27,8 @@ enum ArrayKeyType
                 'lowercase-string',
                 'uppercase-string',
                 'class-string',
-                'literal-string', => self::String,
+                'literal-string',
+                    => self::String,
                 'array-key' => self::Both,
                 default => throw InvalidArgumentException::fromCtx($ctx, "Unsupported array key type [{$key}]"),
             };
