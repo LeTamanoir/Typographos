@@ -1,6 +1,7 @@
 {
     "name": "letamanoir/typographos",
     "description": "Generate TS types from your PHP classes",
+    "version": "0.0.1",
     "keywords": [
         "Typographos"
     ],
@@ -17,7 +18,7 @@
         "php": "^8.4"
     },
     "require-dev": {
-        "laravel/pint": "^1.24",
+        "carthage-software/mago": "1.0.0-beta.12",
         "pestphp/pest": "^3.8",
         "symfony/var-dumper": "^7.3"
     },
@@ -34,11 +35,13 @@
     "scripts": {
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/mago format",
+        "lint": "vendor/bin/mago analyze"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
+            "carthage-software/mago": true,
             "pestphp/pest-plugin": true,
             "phpstan/extension-installer": true
         }

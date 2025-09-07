@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Data;
+namespace Typographos\Dto;
 
 final class RenderCtx
 {
@@ -10,11 +10,6 @@ final class RenderCtx
         public string $indent,
         public int $depth,
     ) {}
-
-    public static function root(): self
-    {
-        return new self(indent: '', depth: 0);
-    }
 
     public function increaseDepth(): self
     {

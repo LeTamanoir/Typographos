@@ -4,34 +4,48 @@ declare(strict_types=1);
 
 namespace Typographos;
 
-class Queue
+final class Queue
 {
     /**
-     * @var array<class-string>
+     * @var array<class-string, mixed>
      */
-    protected array $queue;
+    private array $queue;
 
-    protected array $visited;
+    /**
+     * @var array<class-string, bool>
+     */
+    private array $visited;
 
-    public function __construct(array $classNames)
+    /**
+     * @param  class-string[]  $classNames
+     */
+    public function __construct(array $classNames = [])
     {
-        $this->queue = $classNames;
+        $this->queue = array_flip($classNames);
         $this->visited = [];
     }
 
+    /**
+     * @param  class-string  $className
+     */
     public function enqueue(string $className): void
     {
         if (isset($this->visited[$className])) {
             return;
         }
 
-        $this->queue[] = $className;
+        $this->queue[$className] = true;
     }
 
-    public function shift(): ?string
+    /**
+     * @return class-string|null
+     */
+    public function shift(): string|null
     {
-        $className = array_shift($this->queue);
-        if ($className) {
+        $className = array_key_first($this->queue);
+
+        if ($className !== null) {
+            unset($this->queue[$className]);
             $this->visited[$className] = true;
         }
 
