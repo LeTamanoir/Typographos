@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
-use InvalidArgumentException;
 use Override;
+use Typographos\Exceptions\InvalidArgumentException;
 use Typographos\Interfaces\TypeScriptTypeInterface;
 use Typographos\TypeConverter;
 use Typographos\Utils;
@@ -27,8 +27,8 @@ final class ArrayType implements TypeScriptTypeInterface
     {
         // Parse generic array notation
         $matches = null;
-        if (! preg_match('/^([a-z-]+)<(.+)>$/i', $type, $matches)) {
-            throw new InvalidArgumentException('Unsupported PHPDoc array type '.trim($type));
+        if (!preg_match('/^([a-z-]+)<(.+)>$/i', $type, $matches)) {
+            throw InvalidArgumentException::fromCtx($ctx, 'Unsupported PHPDoc array type ' . trim($type));
         }
 
         [$_, $arrayTypeName, $typeArgs] = $matches;
@@ -37,7 +37,7 @@ final class ArrayType implements TypeScriptTypeInterface
             'list' => self::createList($ctx, $typeArgs, $type),
             'non-empty-list' => self::createNonEmptyList($ctx, $typeArgs, $type),
             'array' => self::createArray($ctx, $typeArgs, $type),
-            default => throw new InvalidArgumentException('Unsupported PHPDoc array type '.trim($type)),
+            default => throw InvalidArgumentException::fromCtx($ctx, 'Unsupported PHPDoc array type ' . trim($type)),
         };
     }
 
@@ -48,7 +48,10 @@ final class ArrayType implements TypeScriptTypeInterface
     {
         $types = Utils::splitTopLevel(trim($typeArgs), ',');
         if (count($types) !== 1) {
-            throw new InvalidArgumentException("Expected exactly one type argument when evaluating [{$originalType}]");
+            throw InvalidArgumentException::fromCtx(
+                $ctx,
+                "Expected exactly one type argument when evaluating [{$originalType}]",
+            );
         }
 
         $valueType = TypeConverter::convert($ctx, trim($types[0]));
@@ -63,7 +66,10 @@ final class ArrayType implements TypeScriptTypeInterface
     {
         $types = Utils::splitTopLevel(trim($typeArgs), ',');
         if (count($types) !== 1) {
-            throw new InvalidArgumentException("Expected exactly one type argument when evaluating [{$originalType}]");
+            throw InvalidArgumentException::fromCtx(
+                $ctx,
+                "Expected exactly one type argument when evaluating [{$originalType}]",
+            );
         }
 
         $valueType = TypeConverter::convert($ctx, trim($types[0]));
@@ -78,14 +84,15 @@ final class ArrayType implements TypeScriptTypeInterface
     {
         $types = Utils::splitTopLevel(trim($typeArgs), ',');
         if (count($types) !== 2) {
-            throw new InvalidArgumentException(
+            throw InvalidArgumentException::fromCtx(
+                $ctx,
                 "Expected array<K,V> to have exactly two type args when evaluating [{$originalType}]",
             );
         }
 
         [$keyRaw, $valueRaw] = [trim($types[0]), trim($types[1])];
 
-        $keyKind = ArrayKeyType::from($keyRaw);
+        $keyKind = ArrayKeyType::from($ctx, $keyRaw);
         $valueType = TypeConverter::convert($ctx, $valueRaw);
 
         return match ($keyKind) {

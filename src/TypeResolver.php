@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Typographos;
 
-use InvalidArgumentException;
 use ReflectionProperty;
+use Typographos\Exceptions\InvalidArgumentException;
 
 final class TypeResolver
 {
@@ -21,12 +21,12 @@ final class TypeResolver
         }
 
         if (str_contains($type, '&')) {
-            throw new InvalidArgumentException('Intersection types are not supported');
+            throw InvalidArgumentException::fromProp($prop, 'Intersection types are not supported');
         }
 
         // nullable starting with `?` can't be unioned
         if (str_starts_with($type, '?')) {
-            return '?'.self::resolveType(substr($type, 1), $prop);
+            return '?' . self::resolveType(substr($type, 1), $prop);
         }
 
         $types = Utils::splitTopLevel($type, '|');
@@ -74,7 +74,8 @@ final class TypeResolver
             if ($arrayType !== null) {
                 return $arrayType;
             }
-            throw new InvalidArgumentException("Malformed PHPDoc [{$doc}] {$errorContext}");
+
+            throw InvalidArgumentException::fromProp($prop, "Malformed PHPDoc [{$doc}] {$errorContext}");
         }
 
         // Fall back to constructor @param docblock
@@ -84,16 +85,16 @@ final class TypeResolver
             if ($arrayType !== null) {
                 return $arrayType;
             }
-            throw new InvalidArgumentException("Malformed PHPDoc [{$constructorDoc}] {$errorContext}");
+            throw InvalidArgumentException::fromProp($prop, "Malformed PHPDoc [{$constructorDoc}] {$errorContext}");
         }
 
-        throw new InvalidArgumentException("Missing doc comment {$errorContext}");
+        throw InvalidArgumentException::fromProp($prop, "Missing doc comment {$errorContext}");
     }
 
     /**
      * Extract type from '@var' docblock
      */
-    private static function extractVarType(string $doc): ?string
+    private static function extractVarType(string $doc): null|string
     {
         $matches = null;
         $pattern = '/@var\s+([^*]+)/i';
@@ -108,10 +109,10 @@ final class TypeResolver
     /**
      * Extract type from '@param' docblock
      */
-    private static function extractParamType(string $doc, string $propName): ?string
+    private static function extractParamType(string $doc, string $propName): null|string
     {
         $matches = null;
-        $pattern = sprintf('/@param\s+([^\s*]+)\s+%s/i', preg_quote('$'.$propName));
+        $pattern = sprintf('/@param\s+([^\s*]+)\s+%s/i', preg_quote('$' . $propName));
 
         if (preg_match($pattern, $doc, $matches)) {
             return trim($matches[1]);
@@ -130,8 +131,8 @@ final class TypeResolver
 
         while ($type === 'parent') {
             $type = get_parent_class($currentClass);
-            if (! $type) {
-                throw new InvalidArgumentException('Parent class not found for '.$currentClass);
+            if (!$type) {
+                throw InvalidArgumentException::fromProp($prop, 'Parent class not found for ' . $currentClass);
             }
             $currentClass = $type;
         }

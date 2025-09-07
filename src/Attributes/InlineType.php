@@ -11,4 +11,6 @@ use Attribute;
  * to be inlined instead of added to the generation queue.
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final class InlineType {}
+final class InlineType
+{
+}
