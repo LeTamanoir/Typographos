@@ -6,7 +6,6 @@ namespace Typographos\Dto;
 
 use InvalidArgumentException;
 use Override;
-use ReflectionException;
 use Typographos\Interfaces\TypeScriptTypeInterface;
 use Typographos\TypeConverter;
 use Typographos\Utils;
@@ -28,8 +27,8 @@ final class ArrayType implements TypeScriptTypeInterface
     {
         // Parse generic array notation
         $matches = null;
-        if (!preg_match('/^([a-z-]+)<(.+)>$/i', $type, $matches)) {
-            throw new InvalidArgumentException('Unsupported PHPDoc array type ' . trim($type));
+        if (! preg_match('/^([a-z-]+)<(.+)>$/i', $type, $matches)) {
+            throw new InvalidArgumentException('Unsupported PHPDoc array type '.trim($type));
         }
 
         [$_, $arrayTypeName, $typeArgs] = $matches;
@@ -38,7 +37,7 @@ final class ArrayType implements TypeScriptTypeInterface
             'list' => self::createList($ctx, $typeArgs, $type),
             'non-empty-list' => self::createNonEmptyList($ctx, $typeArgs, $type),
             'array' => self::createArray($ctx, $typeArgs, $type),
-            default => throw new InvalidArgumentException('Unsupported PHPDoc array type ' . trim($type)),
+            default => throw new InvalidArgumentException('Unsupported PHPDoc array type '.trim($type)),
         };
     }
 

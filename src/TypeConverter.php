@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Typographos;
 
-use InvalidArgumentException;
 use ReflectionClass;
-use ReflectionException;
 use Typographos\Attributes\InlineType;
 use Typographos\Dto\ArrayType;
 use Typographos\Dto\GenCtx;
