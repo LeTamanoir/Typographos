@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Typographos\Dto;
 
 use Override;
+use ReflectionClass;
+use Typographos\Attributes\LiteralType;
 use Typographos\Exceptions\InvalidArgumentException;
 use Typographos\Interfaces\TypeScriptTypeInterface;
 
@@ -22,8 +24,17 @@ enum ScalarType implements TypeScriptTypeInterface
     case any;
     case never;
 
-    public static function from(GenCtx $ctx, string $phpScalar): self
+    public static function from(GenCtx $ctx, string $phpScalar): self|RawType
     {
+        if ($ctx->parentProperty !== null) {
+            $attrs = $ctx->parentProperty->getAttributes();
+            foreach ($attrs as $attr) {
+                if ($attr->getName() === LiteralType::class || is_subclass_of($attr->getName(), LiteralType::class)) {
+                    return new RawType($attr->newInstance()->literal);
+                }
+            }
+        }
+
         return match ($phpScalar) {
             'int', 'float' => self::number,
             'string' => self::string,

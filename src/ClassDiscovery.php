@@ -46,10 +46,6 @@ final class ClassDiscovery
 
         foreach (get_declared_classes() as $class) {
             $ref = new ReflectionClass($class);
-            $fileName = $ref->getFileName();
-            if ($fileName !== false && !str_starts_with($fileName, $dir)) {
-                continue;
-            }
             if ($ref->getAttributes(TypeScript::class)) {
                 $classes[] = $class;
             }
