@@ -25,8 +25,8 @@ final class ClassDiscovery
      */
     public static function discover(string $dir): array
     {
-        if (!$dir || !is_dir($dir)) {
-            throw new RuntimeException('Auto discover directory not found: ' . $dir);
+        if (! $dir || ! is_dir($dir)) {
+            throw new RuntimeException('Auto discover directory not found: '.$dir);
         }
 
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
@@ -47,7 +47,7 @@ final class ClassDiscovery
         foreach (get_declared_classes() as $class) {
             $ref = new ReflectionClass($class);
             $fileName = $ref->getFileName();
-            if ($fileName !== false && !str_starts_with($fileName, $dir)) {
+            if ($fileName !== false && ! str_starts_with($fileName, $dir)) {
                 continue;
             }
             if ($ref->getAttributes(TypeScript::class)) {

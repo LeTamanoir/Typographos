@@ -40,7 +40,7 @@ final class Queue
     /**
      * @return class-string|null
      */
-    public function shift(): null|string
+    public function shift(): ?string
     {
         $className = array_key_first($this->queue);
 
