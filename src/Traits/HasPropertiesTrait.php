@@ -18,19 +18,9 @@ trait HasPropertiesTrait
 
     /**
      * @param  T  $property
-     *
-     * @throws InvalidArgumentException
      */
     public function addProperty(string $propertyKey, mixed $property): self
     {
-        if ($propertyKey === '') {
-            throw new InvalidArgumentException('Property key cannot be empty');
-        }
-
-        if (isset($this->properties[$propertyKey])) {
-            throw new InvalidArgumentException('Property ' . $propertyKey . ' already exists');
-        }
-
         $this->properties[$propertyKey] = $property;
 
         return $this;

@@ -26,19 +26,9 @@ trait HasChildrenTrait
 
     /**
      * @param  T  $type
-     *
-     * @throws InvalidArgumentException
      */
     public function addChild(string $childKey, mixed $type): self
     {
-        if ($childKey === '') {
-            throw new InvalidArgumentException('Child key cannot be empty');
-        }
-
-        if (isset($this->children[$childKey])) {
-            throw new InvalidArgumentException('Child ' . $childKey . ' already exists');
-        }
-
         $this->children[$childKey] = $type;
 
         return $this;
