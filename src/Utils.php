@@ -105,7 +105,8 @@ final class Utils
             'void',
             'false',
             'true',
-            'never', => true,
+            'never',
+                => true,
             default => false,
         };
     }

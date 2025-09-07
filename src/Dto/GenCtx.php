@@ -15,6 +15,6 @@ final class GenCtx
     public function __construct(
         public Queue $queue = new Queue([]),
         public array $typeReplacements = [],
-        public ?ReflectionProperty $parentProperty = null,
+        public null|ReflectionProperty $parentProperty = null,
     ) {}
 }

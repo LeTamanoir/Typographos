@@ -13,9 +13,9 @@ enum ArrayKind
     public function render(string $inner): string
     {
         return match ($this) {
-            self::List => $inner.'[]',
-            self::NonEmptyList => '['.$inner.', ...'.$inner.'[]]',
-            self::IndexString => '{ [key: string]: '.$inner.' }',
+            self::List => $inner . '[]',
+            self::NonEmptyList => '[' . $inner . ', ...' . $inner . '[]]',
+            self::IndexString => '{ [key: string]: ' . $inner . ' }',
         };
     }
 }
