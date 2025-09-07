@@ -1,12 +1,3 @@
-<pre style="font-size: 12px">
-MMP""MM""YMM `YMM'   `MM'`7MM""""""MMF' .p8""8q. `7MM"""YMM `7MM"""Mq.   db        `7MMF'       .p8""8q. VMA""YMM  
-P'   MM   `7   VMA   ,V    MM      MM  6M'    `Mp  MM    `7   MM   `MM. ;MM:    ,mmmmMMmmmm.   6M'    `Mp VMA  `7  
-     MM         VMA ,V     MM      MM 6MP      YMb MM         MM   ,M9 ,V^MM.  6MP   MM   YMb 6MP      YMb VMA     
-     MM          VMMP      MM      MM 8MI      IM8 MM         MMmmdM9 ,M  `MM  8M    MM    M8 8MI      IM8  XV     
-     MM           MM       MM      MM YMb      dM9 MM         MM      AbmmmqMA YMb   MM   dM9 YMb      dM9 AV    , 
-     MM           MM       MM      MM  YM.    ,M9  MM         MM     A'     VML `YmmmMMmmmP'   YM.    ,M9 AV    ,M 
-   .JMML.       .JMML.   .JMML.  .JMML. `"bmmd"' .JMML.     .JMML. .AMA.   .AMMA.  .JMML.       `"bmmd"' AMMMMMMMF 
-</pre>
 <h1 align="center">🏛️ Typographos 🏛️</h1>
 
 Generate TS types from your PHP classes.
