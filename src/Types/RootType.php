@@ -40,7 +40,7 @@ final class RootType implements Type
         return $root;
     }
 
-    public function addType(string $fqcn, Type $type): void
+    public function addType(string $fqcn, RecordType|EnumType $type): void
     {
         // extract namespace: App\DTO\User → App\DTO
         $namespace = substr($fqcn, 0, strrpos($fqcn, '\\') ?: strlen($fqcn));

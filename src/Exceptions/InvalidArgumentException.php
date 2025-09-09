@@ -36,9 +36,9 @@ class InvalidArgumentException
             . ' in '
             . $declClass->getName()
             . ' ('
-            . $declClass->getFileName()
+            . ($declClass->getFileName() ?: 'unknown')
             . ':'
-            . $declClass->getStartLine()
+            . ($declClass->getStartLine() ?: 'unknown')
             . ')'
         );
     }

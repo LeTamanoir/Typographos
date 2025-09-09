@@ -26,7 +26,7 @@ final class InlineEnumType implements Type
         return $this;
     }
 
-    public static function from(GenerationContext $ctx, string $className): self
+    public static function from(GenerationContext $_ctx, string $className): self
     {
         $ref = new ReflectionEnum($className);
         $enum = new self();
