@@ -17,7 +17,7 @@ it('can generate enums', function (): void {
     new Generator()
         ->outputTo('tests/enum-literals-generated.d.ts')
         ->withIndent('    ')
-        ->generate([WithEnums::class]);
+        ->generate([WithEnums::class, StringEnum::class, IntEnum::class]);
 
     expect(file_get_contents('tests/enum-literals-generated.d.ts'))
         ->toBe(file_get_contents('tests/Expected/enum-literals.d.ts'));

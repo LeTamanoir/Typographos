@@ -7,6 +7,7 @@ namespace Typographos\Dto;
 use Override;
 use ReflectionClass;
 use ReflectionProperty;
+use Typographos\Enums\RecordStyle;
 use Typographos\Interfaces\TypeScriptTypeInterface;
 use Typographos\TypeConverter;
 use Typographos\TypeResolver;
@@ -56,7 +57,11 @@ final class RecordType implements TypeScriptTypeInterface
         $indent = str_repeat($ctx->indent, $ctx->depth);
         $propIndent = $indent . $ctx->indent;
 
-        $ts = $indent . 'export interface ' . $this->name . " {\n";
+        if ($ctx->recordStyle === RecordStyle::INTERFACES) {
+            $ts = $indent . 'export interface ' . $this->name . " {\n";
+        } else {
+            $ts = $indent . 'export type ' . $this->name . " = {\n";
+        }
 
         foreach ($this->properties as $name => $type) {
             $ts .= $propIndent . Utils::tsProp($name) . ': ' . $type->render($ctx) . "\n";
