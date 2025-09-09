@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Typographos\Types;
 
 use Override;
-use ReflectionClass;
 use Typographos\Attributes\LiteralType;
 use Typographos\Context\GenerationContext;
 use Typographos\Context\RenderContext;
