@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use Override;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
+use Typographos\Interfaces\Type;
 
-final class NamespaceType implements TypeScriptTypeInterface
+final class NamespaceType implements Type
 {
     /**
      * @var array<string, NamespaceType>
@@ -15,7 +17,7 @@ final class NamespaceType implements TypeScriptTypeInterface
     public array $namespaces = [];
 
     /**
-     * @var array<string, TypeScriptTypeInterface>
+     * @var array<string, Type>
      */
     public array $types = [];
 
@@ -24,7 +26,7 @@ final class NamespaceType implements TypeScriptTypeInterface
     ) {}
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         $indent = str_repeat($ctx->indent, $ctx->depth);
 

@@ -2,31 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use Override;
 use ReflectionClass;
 use ReflectionProperty;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
+use Typographos\Interfaces\Type;
 use Typographos\TypeConverter;
 use Typographos\TypeResolver;
 use Typographos\Utils;
 
-final class InlineRecordType implements TypeScriptTypeInterface
+final class InlineRecordType implements Type
 {
     /**
-     * @var array<string, TypeScriptTypeInterface>
+     * @var array<string, Type>
      */
     private array $properties = [];
 
-    public function addProperty(string $propertyKey, TypeScriptTypeInterface $property): self
+    public function addProperty(string $propertyKey, Type $property): self
     {
         $this->properties[$propertyKey] = $property;
 
         return $this;
     }
 
-    public static function from(GenCtx $ctx, string $className): self
+    public static function from(GenerationContext $ctx, string $className): self
     {
         $ref = new ReflectionClass($className);
         $record = new InlineRecordType();
@@ -45,7 +47,7 @@ final class InlineRecordType implements TypeScriptTypeInterface
     }
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         $indent = str_repeat($ctx->indent, $ctx->depth + 1);
         $propIndent = $indent . $ctx->indent;

@@ -25,7 +25,7 @@ The library uses static utility classes for optimal performance while maintainin
 
 ### Type System
 The library models TypeScript types through a hierarchy in `src/Dto/`:
-- `TypeScriptTypeInterface`: Root contract for all type representations
+- `Type`: Root contract for all type representations
 - `ScalarType`: Primitive types (string, number, boolean, etc.)
 - `ArrayType`: Array types with support for PHPDoc annotations (`list<T>`, `array<K,V>`, etc.)
 - `UnionType`: Union types (`A | B`)

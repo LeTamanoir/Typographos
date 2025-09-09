@@ -6,11 +6,11 @@ namespace Typographos;
 
 use InvalidArgumentException;
 use RuntimeException;
-use Typographos\Dto\GenCtx;
-use Typographos\Dto\RenderCtx;
-use Typographos\Dto\RootType;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
 use Typographos\Enums\EnumStyle;
 use Typographos\Enums\RecordStyle;
+use Typographos\Types\RootType;
 
 final class Generator
 {
@@ -126,7 +126,7 @@ final class Generator
             throw new InvalidArgumentException('No classes to generate');
         }
 
-        $genCtx = new GenCtx(
+        $genCtx = new GenerationContext(
             queue: new Queue($classNames),
             typeReplacements: $this->typeReplacements,
             parentProperty: null,
@@ -134,7 +134,7 @@ final class Generator
 
         $root = RootType::from($genCtx);
 
-        $renderCtx = new RenderCtx(
+        $renderCtx = new RenderContext(
             indent: $this->indent,
             depth: 0,
             enumStyle: $this->enumStyle,

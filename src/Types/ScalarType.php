@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use Override;
 use ReflectionClass;
 use Typographos\Attributes\LiteralType;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
 use Typographos\Exceptions\InvalidArgumentException;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Interfaces\Type;
 
-enum ScalarType implements TypeScriptTypeInterface
+enum ScalarType implements Type
 {
     case boolean;
     case number;
@@ -24,7 +26,7 @@ enum ScalarType implements TypeScriptTypeInterface
     case any;
     case never;
 
-    public static function from(GenCtx $ctx, string $phpScalar): self|RawType
+    public static function from(GenerationContext $ctx, string $phpScalar): self|RawType
     {
         if ($ctx->parentProperty !== null) {
             $attrs = $ctx->parentProperty->getAttributes();
@@ -49,7 +51,7 @@ enum ScalarType implements TypeScriptTypeInterface
     }
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         return $this->name;
     }

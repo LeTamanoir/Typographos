@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use Override;
 use ReflectionClass;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
+use Typographos\Interfaces\Type;
+use Typographos\TypeConverter;
 use Typographos\Utils;
 
-final class RootType implements TypeScriptTypeInterface
+final class RootType implements Type
 {
     /**
      * @var array<string, NamespaceType>
@@ -17,11 +20,11 @@ final class RootType implements TypeScriptTypeInterface
     public array $namespaces = [];
 
     /**
-     * @var array<string, TypeScriptTypeInterface>
+     * @var array<string, Type>
      */
     public array $types = [];
 
-    public static function from(GenCtx $ctx): self
+    public static function from(GenerationContext $ctx): self
     {
         $root = new self();
 
@@ -37,7 +40,7 @@ final class RootType implements TypeScriptTypeInterface
         return $root;
     }
 
-    public function addType(string $fqcn, TypeScriptTypeInterface $type): void
+    public function addType(string $fqcn, Type $type): void
     {
         // extract namespace: App\DTO\User → App\DTO
         $namespace = substr($fqcn, 0, strrpos($fqcn, '\\') ?: strlen($fqcn));
@@ -56,7 +59,7 @@ final class RootType implements TypeScriptTypeInterface
     }
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         $ts = '';
 

@@ -6,11 +6,11 @@ namespace Typographos\Exceptions;
 
 use InvalidArgumentException as BaseInvalidArgumentException;
 use ReflectionProperty;
-use Typographos\Dto\GenCtx;
+use Typographos\Context\GenerationContext;
 
 class InvalidArgumentException
 {
-    public static function fromCtx(GenCtx $ctx, string $message): BaseInvalidArgumentException
+    public static function fromCtx(GenerationContext $ctx, string $message): BaseInvalidArgumentException
     {
         $location = '';
 
