@@ -81,7 +81,7 @@ final class Utils
         if (str_ends_with($type, '[]')) {
             return true;
         }
-        
+
         return match (self::stripGeneric($type)) {
             'non-empty-list', 'list', 'array' => true,
             default => false,
@@ -123,24 +123,29 @@ final class Utils
     {
         $parts = [];
         $buf = '';
-        $depth = 0;
+
+        $specialCharsOpen = ['<', '('];
+        $specialCharsClose = ['>', ')'];
+
+        /** @var array<string, int> */
+        $depths = array_fill_keys([...$specialCharsOpen, ...$specialCharsClose], 0);
 
         foreach (str_split($content) as $ch) {
-            if ($ch === '<') {
-                $depth++;
+            if (in_array($ch, $specialCharsOpen)) {
+                $depths[$ch]++;
                 $buf .= $ch;
 
                 continue;
             }
-            if ($ch === '>') {
-                if ($depth > 0) {
-                    $depth--;
+            if (in_array($ch, $specialCharsClose)) {
+                if ($depths[$ch] > 0) {
+                    $depths[$ch]--;
                 }
                 $buf .= $ch;
 
                 continue;
             }
-            if ($ch === $separator && $depth === 0) {
+            if ($ch === $separator && array_all($depths, fn($d) => $d === 0)) {
                 $parts[] = trim($buf);
                 $buf = '';
 
