@@ -9,7 +9,7 @@ it('has sensible defaults', function (): void {
 
     expect($generator->indent)->toBe("\t");
     expect($generator->typeReplacements)->toBe([]);
-    expect($generator->discoverDirectory)->toBeNull();
+    expect($generator->discoverDirectories)->toBe([]);
     expect($generator->filePath)->toBe('generated.d.ts');
 });
 
@@ -18,7 +18,7 @@ it('can set custom values using fluent interface', function (): void {
         ->withIndent('  ')
         ->withTypeReplacement('int', 'number')
         ->withTypeReplacement(\DateTime::class, 'string')
-        ->discoverFrom('/some/path')
+        ->withDiscoverFrom('/some/path')
         ->outputTo('custom.d.ts');
 
     expect($generator->indent)->toBe('  ');
@@ -26,6 +26,6 @@ it('can set custom values using fluent interface', function (): void {
         'int' => 'number',
         \DateTime::class => 'string',
     ]);
-    expect($generator->discoverDirectory)->toBe('/some/path');
+    expect($generator->discoverDirectories)->toBe(['/some/path']);
     expect($generator->filePath)->toBe('custom.d.ts');
 });

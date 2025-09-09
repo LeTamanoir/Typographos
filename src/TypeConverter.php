@@ -8,6 +8,7 @@ use ReflectionClass;
 use Typographos\Attributes\InlineType;
 use Typographos\Dto\ArrayType;
 use Typographos\Dto\GenCtx;
+use Typographos\Dto\InlineEnumType;
 use Typographos\Dto\InlineRecordType;
 use Typographos\Dto\RawType;
 use Typographos\Dto\ReferenceType;
@@ -85,7 +86,9 @@ final class TypeConverter
                 $ctx->parentProperty !== null && count($ctx->parentProperty->getAttributes(InlineType::class)) > 0;
 
             if ($shouldInline) {
-                $ts = InlineRecordType::from($ctx, $type);
+                $ts = new ReflectionClass($type)->isEnum()
+                    ? InlineEnumType::from($ctx, $type)
+                    : InlineRecordType::from($ctx, $type);
             } else {
                 $ctx->queue->enqueue($type);
                 $ts = new ReferenceType($type);

@@ -9,6 +9,7 @@ use RuntimeException;
 use Typographos\Dto\GenCtx;
 use Typographos\Dto\RenderCtx;
 use Typographos\Dto\RootType;
+use Typographos\Enums\EnumStyle;
 
 final class Generator
 {
@@ -25,9 +26,11 @@ final class Generator
     public array $typeReplacements = [];
 
     /**
-     * Directory to auto-discover classes from
+     * Directories to auto-discover classes from
+     *
+     * @var string[]
      */
-    public null|string $discoverDirectory = null;
+    public array $discoverDirectories = [];
 
     /**
      * File path to write the generated types to
@@ -35,11 +38,16 @@ final class Generator
     public string $filePath = 'generated.d.ts';
 
     /**
+     * Style of enums to generate
+     */
+    public EnumStyle $enumStyle = EnumStyle::ENUMS;
+
+    /**
      * Set the directory to auto-discover classes from
      */
-    public function discoverFrom(string $directory): self
+    public function withDiscoverFrom(string ...$directories): self
     {
-        $this->discoverDirectory = $directory;
+        $this->discoverDirectories = array_merge($this->discoverDirectories, $directories);
 
         return $this;
     }
@@ -50,6 +58,16 @@ final class Generator
     public function outputTo(string $filePath): self
     {
         $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    /**
+     * Use types instead of enums
+     */
+    public function withEnumsStyle(EnumStyle $style): self
+    {
+        $this->enumStyle = $style;
 
         return $this;
     }
@@ -82,8 +100,10 @@ final class Generator
      */
     public function generate(array $classNames = []): void
     {
-        if ($this->discoverDirectory) {
-            $classNames = array_unique(array_merge($classNames, ClassDiscovery::discover($this->discoverDirectory)));
+        if (count($this->discoverDirectories) > 0) {
+            foreach ($this->discoverDirectories as $directory) {
+                $classNames = array_unique(array_merge($classNames, ClassDiscovery::discover($directory)));
+            }
         }
 
         if (count($classNames) === 0) {
@@ -101,6 +121,7 @@ final class Generator
         $renderCtx = new RenderCtx(
             indent: $this->indent,
             depth: 0,
+            enumStyle: $this->enumStyle,
         );
 
         $ts = $root->render($renderCtx);
