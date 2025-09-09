@@ -77,6 +77,11 @@ final class Utils
      */
     public static function isArrayType(string $type): bool
     {
+        // Check for bracket syntax like string[] or User[]
+        if (str_ends_with($type, '[]')) {
+            return true;
+        }
+        
         return match (self::stripGeneric($type)) {
             'non-empty-list', 'list', 'array' => true,
             default => false,
