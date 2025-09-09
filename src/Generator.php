@@ -10,6 +10,7 @@ use Typographos\Dto\GenCtx;
 use Typographos\Dto\RenderCtx;
 use Typographos\Dto\RootType;
 use Typographos\Enums\EnumStyle;
+use Typographos\Enums\RecordStyle;
 
 final class Generator
 {
@@ -43,6 +44,11 @@ final class Generator
     public EnumStyle $enumStyle = EnumStyle::ENUMS;
 
     /**
+     * Style of records to generate
+     */
+    public RecordStyle $recordStyle = RecordStyle::INTERFACES;
+
+    /**
      * Set the directory to auto-discover classes from
      */
     public function withDiscoverFrom(string ...$directories): self
@@ -63,11 +69,21 @@ final class Generator
     }
 
     /**
-     * Use types instead of enums
+     * Enum style
      */
     public function withEnumsStyle(EnumStyle $style): self
     {
         $this->enumStyle = $style;
+
+        return $this;
+    }
+
+    /**
+     * Record style
+     */
+    public function withRecordsStyle(RecordStyle $style): self
+    {
+        $this->recordStyle = $style;
 
         return $this;
     }
@@ -122,6 +138,7 @@ final class Generator
             indent: $this->indent,
             depth: 0,
             enumStyle: $this->enumStyle,
+            recordStyle: $this->recordStyle,
         );
 
         $ts = $root->render($renderCtx);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
+use BackedEnum;
 use Override;
 use ReflectionEnum;
 use ReflectionEnumUnitCase;
@@ -28,13 +29,16 @@ final class EnumType implements TypeScriptTypeInterface
         return $this;
     }
 
-    public static function from(GenCtx $ctx, string $className): self
+    public static function from(GenCtx $_ctx, string $className): self
     {
         $ref = new ReflectionEnum($className);
         $enum = new self($ref->getShortName());
 
         foreach ($ref->getCases() as $case) {
-            $enum->addCase($case->getName(), $case->getValue()->value);
+            $value = $case->getValue();
+            if ($value instanceof BackedEnum) {
+                $enum->addCase($case->getName(), $value->value);
+            }
         }
 
         return $enum;

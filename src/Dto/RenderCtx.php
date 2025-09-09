@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Typographos\Dto;
 
 use Typographos\Enums\EnumStyle;
+use Typographos\Enums\RecordStyle;
 
-final class RenderCtx
+final readonly class RenderCtx
 {
     public function __construct(
-        public string $indent = "\t",
+        public string $indent,
 
-        public int $depth = 0,
+        public int $depth,
 
-        public EnumStyle $enumStyle = EnumStyle::ENUMS,
+        public EnumStyle $enumStyle,
+
+        public RecordStyle $recordStyle,
     ) {}
 
     public function increaseDepth(): self
@@ -22,6 +25,7 @@ final class RenderCtx
             indent: $this->indent,
             depth: $this->depth + 1,
             enumStyle: $this->enumStyle,
+            recordStyle: $this->recordStyle,
         );
     }
 }

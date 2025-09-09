@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Typographos\Dto;
 
+use BackedEnum;
 use InvalidArgumentException;
 use Override;
 use ReflectionEnum;
@@ -26,10 +27,13 @@ final class InlineEnumType implements TypeScriptTypeInterface
     public static function from(GenCtx $ctx, string $className): self
     {
         $ref = new ReflectionEnum($className);
-        $enum = new self($ref->getShortName());
+        $enum = new self();
 
         foreach ($ref->getCases() as $case) {
-            $enum->addCase($case->getName(), $case->getValue()->value);
+            $value = $case->getValue();
+            if ($value instanceof BackedEnum) {
+                $enum->addCase($case->getName(), $value->value);
+            }
         }
 
         return $enum;

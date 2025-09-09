@@ -71,6 +71,8 @@ declare namespace App {
 - **Smart type detection**: Automatically converts PHP types to their TypeScript equivalents with full nullable and union type support
 - **Flexible inline types**: Use `#[InlineType]` to embed simple objects directly instead of creating separate interfaces  
 - **Rich array support**: Handles complex array types like `list<T>`, `non-empty-list<T>`, and `array<K,V>` from PHPDoc annotations
+- **PHP enum support**: Automatically converts PHP enums to TypeScript enums or union types
+- **Flexible output styles**: Generate interfaces or types for records, enums or union types for enums
 - **Namespace preservation**: Maintains your PHP namespace structure in the generated TypeScript declarations
 - **Custom type mapping**: Replace any PHP type with custom TypeScript types (e.g., `DateTime` → `string`, `int` → `bigint`)
 - **Directory scanning**: Automatically discover all your DTOs from entire directories
@@ -92,6 +94,8 @@ new Generator()
     ->discoverFrom(__DIR__.'/app/DTO')
     ->outputTo('resources/js/types.d.ts')
     ->withIndent('    ')                            // default: "\t"
+    ->withEnumsStyle(EnumStyle::TYPES)              // ENUMS (default) or TYPES
+    ->withRecordsStyle(RecordStyle::TYPES)          // INTERFACES (default) or TYPES
     ->withTypeReplacement(DateTime::class, 'string')
     ->generate();
 
@@ -116,6 +120,115 @@ public array $scoresByUser;
 
 /** @var non-empty-list<list<string>> */
 public array $matrix;
+```
+
+### Example: PHP enums
+
+Typographos supports PHP backed enums and can generate them as either TypeScript enums or union types:
+
+```php
+use Typographos\Attributes\TypeScript;
+
+#[TypeScript]
+enum Status: string
+{
+    case PENDING = 'pending';
+    case ACTIVE = 'active';
+    case INACTIVE = 'inactive';
+}
+
+#[TypeScript]
+enum Priority: int
+{
+    case LOW = 1;
+    case MEDIUM = 2;
+    case HIGH = 3;
+    case URGENT = 4;
+}
+
+#[TypeScript]
+class Task
+{
+    public function __construct(
+        public string $title,
+        public Status $status,
+        public Priority $priority,
+        #[InlineType]                    // Inline enum as union type
+        public Status $inlineStatus,
+    ) {}
+}
+```
+
+**Default output (EnumStyle::ENUMS):**
+```typescript
+declare namespace App {
+    export enum Status {
+        PENDING = "pending",
+        ACTIVE = "active", 
+        INACTIVE = "inactive",
+    }
+    export enum Priority {
+        LOW = 1,
+        MEDIUM = 2,
+        HIGH = 3,
+        URGENT = 4,
+    }
+    export interface Task {
+        title: string
+        status: Status
+        priority: Priority
+        inlineStatus: "pending" | "active" | "inactive"  // Inlined as union
+    }
+}
+```
+
+**With EnumStyle::TYPES:**
+```typescript
+declare namespace App {
+    export type Status = "pending" | "active" | "inactive"
+    export type Priority = 1 | 2 | 3 | 4
+    export interface Task {
+        title: string
+        status: Status
+        priority: Priority
+        inlineStatus: "pending" | "active" | "inactive"
+    }
+}
+```
+
+### Example: record styles
+
+Choose between TypeScript interfaces (default) or type aliases for your PHP classes:
+
+```php
+use Typographos\Enums\RecordStyle;
+use Typographos\Generator;
+
+// Generate as interfaces (default)
+new Generator()
+    ->withRecordsStyle(RecordStyle::INTERFACES)
+    ->generate([User::class]);
+
+// Generate as types
+new Generator()
+    ->withRecordsStyle(RecordStyle::TYPES)
+    ->generate([User::class]);
+```
+
+**RecordStyle::INTERFACES (default):**
+```typescript
+export interface User {
+    name: string
+    age: number
+}
+```
+
+**RecordStyle::TYPES:**
+```typescript
+export type User = {
+    name: string
+    age: number
+}
 ```
 
 ### Example: inline records
@@ -212,6 +325,8 @@ new Generator()
 - `discoverFrom(string $directory)`: Auto-discover classes with `#[TypeScript]` attribute
 - `outputTo(string $filePath)`: Set output file path
 - `withIndent(string $indent)`: Set indentation style (default: `"\t"`)
+- `withEnumsStyle(EnumStyle $style)`: Set enum output style (`ENUMS` or `TYPES`)
+- `withRecordsStyle(RecordStyle $style)`: Set record output style (`INTERFACES` or `TYPES`) 
 - `withTypeReplacement(string $phpType, string $tsType)`: Replace PHP types with custom TypeScript types
 - `generate(array $classNames = [])`: Generate and write types (optionally specify classes explicitly)
 
