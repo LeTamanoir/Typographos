@@ -2,28 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use Override;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
 use Typographos\Exceptions\InvalidArgumentException;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Interfaces\Type;
 use Typographos\TypeConverter;
 use Typographos\Utils;
 
-final class ArrayType implements TypeScriptTypeInterface
+final class ArrayType implements Type
 {
     private function __construct(
         private ArrayKind $kind,
-        private TypeScriptTypeInterface $inner,
+        private Type $inner,
     ) {}
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         return $this->kind->render($this->inner->render($ctx));
     }
 
-    public static function from(GenCtx $ctx, string $type): self
+    public static function from(GenerationContext $ctx, string $type): self
     {
         // Parse generic array notation
         $matches = null;
@@ -44,7 +46,7 @@ final class ArrayType implements TypeScriptTypeInterface
     /**
      * Create list<T> array type
      */
-    private static function createList(GenCtx $ctx, string $typeArgs, string $originalType): self
+    private static function createList(GenerationContext $ctx, string $typeArgs, string $originalType): self
     {
         $types = Utils::splitTopLevel(trim($typeArgs), ',');
         if (count($types) !== 1) {
@@ -62,7 +64,7 @@ final class ArrayType implements TypeScriptTypeInterface
     /**
      * Create non-empty-list<T> array type
      */
-    private static function createNonEmptyList(GenCtx $ctx, string $typeArgs, string $originalType): self
+    private static function createNonEmptyList(GenerationContext $ctx, string $typeArgs, string $originalType): self
     {
         $types = Utils::splitTopLevel(trim($typeArgs), ',');
         if (count($types) !== 1) {
@@ -80,7 +82,7 @@ final class ArrayType implements TypeScriptTypeInterface
     /**
      * Create array<K,V> type with key-value pairs
      */
-    private static function createArray(GenCtx $ctx, string $typeArgs, string $originalType): self
+    private static function createArray(GenerationContext $ctx, string $typeArgs, string $originalType): self
     {
         $types = Utils::splitTopLevel(trim($typeArgs), ',');
         if (count($types) !== 2) {

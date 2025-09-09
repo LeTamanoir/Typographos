@@ -6,22 +6,22 @@ namespace Typographos;
 
 use ReflectionClass;
 use Typographos\Attributes\InlineType;
-use Typographos\Dto\ArrayType;
-use Typographos\Dto\GenCtx;
-use Typographos\Dto\InlineEnumType;
-use Typographos\Dto\InlineRecordType;
-use Typographos\Dto\RawType;
-use Typographos\Dto\ReferenceType;
-use Typographos\Dto\ScalarType;
-use Typographos\Dto\UnionType;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Context\GenerationContext;
+use Typographos\Interfaces\Type;
+use Typographos\Types\ArrayType;
+use Typographos\Types\InlineEnumType;
+use Typographos\Types\InlineRecordType;
+use Typographos\Types\RawType;
+use Typographos\Types\ReferenceType;
+use Typographos\Types\ScalarType;
+use Typographos\Types\UnionType;
 
 final class TypeConverter
 {
     /**
      * Convert resolved PHP type to TypeScript type
      */
-    public static function convert(GenCtx $ctx, string $type): TypeScriptTypeInterface
+    public static function convert(GenerationContext $ctx, string $type): Type
     {
         $types = Utils::splitTopLevel($type, '|');
         $parts = [];
@@ -44,7 +44,7 @@ final class TypeConverter
     /**
      * Convert a single PHP type to TypeScript
      */
-    private static function convertType(GenCtx $ctx, string $type): TypeScriptTypeInterface
+    private static function convertType(GenerationContext $ctx, string $type): Type
     {
         if ($type === '') {
             return ScalarType::unknown;

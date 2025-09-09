@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
+use Typographos\Context\GenerationContext;
 use Typographos\Exceptions\InvalidArgumentException;
 
 enum ArrayKeyType
@@ -12,7 +13,7 @@ enum ArrayKeyType
     case String;
     case Both;
 
-    public static function from(GenCtx $ctx, string $type): self
+    public static function from(GenerationContext $ctx, string $type): self
     {
         $keys = array_map(trim(...), explode('|', trim($type)));
 

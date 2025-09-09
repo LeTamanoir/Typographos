@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use BackedEnum;
 use Override;
 use ReflectionEnum;
 use ReflectionEnumUnitCase;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
 use Typographos\Enums\EnumStyle;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Interfaces\Type;
 use Typographos\Utils;
 
-final class EnumType implements TypeScriptTypeInterface
+final class EnumType implements Type
 {
     /**
      * @var array<string, string|int>
@@ -29,7 +31,7 @@ final class EnumType implements TypeScriptTypeInterface
         return $this;
     }
 
-    public static function from(GenCtx $_ctx, string $className): self
+    public static function from(GenerationContext $_ctx, string $className): self
     {
         $ref = new ReflectionEnum($className);
         $enum = new self($ref->getShortName());
@@ -45,7 +47,7 @@ final class EnumType implements TypeScriptTypeInterface
     }
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         $indent = str_repeat($ctx->indent, $ctx->depth);
         $propIndent = $indent . $ctx->indent;

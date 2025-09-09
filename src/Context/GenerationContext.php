@@ -2,19 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Context;
 
 use ReflectionProperty;
 use Typographos\Queue;
 
-final class GenCtx
+final class GenerationContext
 {
     /**
      * @param  array<string, string>  $typeReplacements
      */
     public function __construct(
-        public Queue $queue = new Queue([]),
-        public array $typeReplacements = [],
-        public null|ReflectionProperty $parentProperty = null,
+        public Queue $queue,
+
+        public array $typeReplacements,
+
+        public null|ReflectionProperty $parentProperty,
     ) {}
 }

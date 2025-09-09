@@ -10,21 +10,21 @@ class UserDefinedTestClass
     ) {}
 }
 
-use Typographos\Dto\GenCtx;
-use Typographos\Dto\RawType;
-use Typographos\Dto\ReferenceType;
-use Typographos\Dto\RenderCtx;
-use Typographos\Dto\ScalarType;
-use Typographos\Dto\UnionType;
+use Typographos\Context\GenerationContext;
+use Typographos\Types\RawType;
+use Typographos\Types\ReferenceType;
+use Typographos\Context\RenderContext;
+use Typographos\Types\ScalarType;
+use Typographos\Types\UnionType;
 use Typographos\Enums\EnumStyle;
 use Typographos\Enums\RecordStyle;
 use Typographos\Queue;
 use Typographos\TypeConverter;
 
-$renderCtx = new RenderCtx('', 0, EnumStyle::ENUMS, RecordStyle::INTERFACES);
+$renderCtx = new RenderContext('', 0, EnumStyle::ENUMS, RecordStyle::INTERFACES);
 
 it('handles empty string type', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
     $result = TypeConverter::convert($ctx, '');
 
     expect($result)->toBeInstanceOf(ScalarType::class);
@@ -33,7 +33,7 @@ it('handles empty string type', function () use ($renderCtx): void {
 
 it('handles nullable type replacements', function () use ($renderCtx): void {
     $typeReplacements = ['CustomType' => 'MyCustomType'];
-    $ctx = new GenCtx(new Queue([]), $typeReplacements, null);
+    $ctx = new GenerationContext(new Queue([]), $typeReplacements, null);
 
     $result = TypeConverter::convert($ctx, '?CustomType');
 
@@ -46,7 +46,7 @@ it('handles basic type replacements', function () use ($renderCtx): void {
         'int' => 'number',
         'string' => 'text',
     ];
-    $ctx = new GenCtx(new Queue([]), $typeReplacements, null);
+    $ctx = new GenerationContext(new Queue([]), $typeReplacements, null);
 
     $result = TypeConverter::convert($ctx, 'int');
     expect($result)->toBeInstanceOf(RawType::class);
@@ -58,7 +58,7 @@ it('handles basic type replacements', function () use ($renderCtx): void {
 });
 
 it('handles scalar types', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
 
     $result = TypeConverter::convert($ctx, 'string');
     expect($result)->toBeInstanceOf(ScalarType::class);
@@ -70,7 +70,7 @@ it('handles scalar types', function () use ($renderCtx): void {
 });
 
 it('handles nullable scalar types', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
 
     $result = TypeConverter::convert($ctx, '?string');
     expect($result)->toBeInstanceOf(UnionType::class);
@@ -78,7 +78,7 @@ it('handles nullable scalar types', function () use ($renderCtx): void {
 });
 
 it('handles union types', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
 
     $result = TypeConverter::convert($ctx, 'string|int|bool');
     expect($result)->toBeInstanceOf(UnionType::class);
@@ -86,7 +86,7 @@ it('handles union types', function () use ($renderCtx): void {
 });
 
 it('handles user-defined classes', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
 
     $result = TypeConverter::convert($ctx, 'UserDefinedTestClass');
     expect($result)->toBeInstanceOf(ReferenceType::class);
@@ -94,7 +94,7 @@ it('handles user-defined classes', function () use ($renderCtx): void {
 });
 
 it('handles unknown types', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
 
     $result = TypeConverter::convert($ctx, 'NonExistentClass');
     expect($result)->toBeInstanceOf(ScalarType::class);
@@ -102,7 +102,7 @@ it('handles unknown types', function () use ($renderCtx): void {
 });
 
 it('handles mixed null types correctly', function () use ($renderCtx): void {
-    $ctx = new GenCtx(new Queue([]), [], null);
+    $ctx = new GenerationContext(new Queue([]), [], null);
 
     // null and mixed shouldn't get extra null union
     $result1 = TypeConverter::convert($ctx, '?null');
@@ -114,7 +114,7 @@ it('handles mixed null types correctly', function () use ($renderCtx): void {
 
 it('enqueues user-defined classes', function () use ($renderCtx): void {
     $queue = new Queue([]);
-    $ctx = new GenCtx($queue, [], null);
+    $ctx = new GenerationContext($queue, [], null);
 
     TypeConverter::convert($ctx, 'UserDefinedTestClass');
 
@@ -128,7 +128,7 @@ it('handles complex type replacements with nullability', function () use ($rende
         'CustomInterface' => 'MyInterface',
         'AnotherType' => 'SomeType',
     ];
-    $ctx = new GenCtx(new Queue([]), $typeReplacements, null);
+    $ctx = new GenerationContext(new Queue([]), $typeReplacements, null);
 
     $result1 = TypeConverter::convert($ctx, '?CustomInterface');
     expect($result1->render($renderCtx))->toBe('MyInterface | null');

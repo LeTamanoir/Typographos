@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Typographos\Dto;
+namespace Typographos\Types;
 
 use BackedEnum;
 use InvalidArgumentException;
 use Override;
 use ReflectionEnum;
-use Typographos\Interfaces\TypeScriptTypeInterface;
+use Typographos\Context\GenerationContext;
+use Typographos\Context\RenderContext;
+use Typographos\Interfaces\Type;
 
-final class InlineEnumType implements TypeScriptTypeInterface
+final class InlineEnumType implements Type
 {
     /**
      * @var array<string, string|int>
@@ -24,7 +26,7 @@ final class InlineEnumType implements TypeScriptTypeInterface
         return $this;
     }
 
-    public static function from(GenCtx $ctx, string $className): self
+    public static function from(GenerationContext $_ctx, string $className): self
     {
         $ref = new ReflectionEnum($className);
         $enum = new self();
@@ -40,7 +42,7 @@ final class InlineEnumType implements TypeScriptTypeInterface
     }
 
     #[Override]
-    public function render(RenderCtx $ctx): string
+    public function render(RenderContext $ctx): string
     {
         $ts = '';
 
