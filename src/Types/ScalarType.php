@@ -31,7 +31,9 @@ enum ScalarType implements Type
             $attrs = $ctx->parentProperty->getAttributes();
             foreach ($attrs as $attr) {
                 if ($attr->getName() === LiteralType::class || is_subclass_of($attr->getName(), LiteralType::class)) {
-                    return new RawType($attr->newInstance()->literal);
+                    /** @var LiteralType */
+                    $instance = $attr->newInstance();
+                    return new RawType($instance->literal);
                 }
             }
         }
