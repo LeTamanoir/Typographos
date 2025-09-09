@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Typographos\Dto;
 
 use Override;
+use ReflectionClass;
 use Typographos\Interfaces\TypeScriptTypeInterface;
 use Typographos\Utils;
 
@@ -16,9 +17,9 @@ final class RootType implements TypeScriptTypeInterface
     public array $namespaces = [];
 
     /**
-     * @var array<string, RecordType>
+     * @var array<string, TypeScriptTypeInterface>
      */
-    public array $records = [];
+    public array $types = [];
 
     public static function from(GenCtx $ctx): self
     {
@@ -26,15 +27,17 @@ final class RootType implements TypeScriptTypeInterface
 
         // process all classes in queue (queue may grow during processing)
         while ($className = $ctx->queue->shift()) {
-            $record = RecordType::from($ctx, $className);
+            $type = new ReflectionClass($className)->isEnum()
+                ? EnumType::from($ctx, $className)
+                : RecordType::from($ctx, $className);
 
-            $root->addRecord($className, $record);
+            $root->addType($className, $type);
         }
 
         return $root;
     }
 
-    public function addRecord(string $fqcn, RecordType $record): void
+    public function addType(string $fqcn, TypeScriptTypeInterface $type): void
     {
         // extract namespace: App\DTO\User → App\DTO
         $namespace = substr($fqcn, 0, strrpos($fqcn, '\\') ?: strlen($fqcn));
@@ -49,7 +52,7 @@ final class RootType implements TypeScriptTypeInterface
             $node = &$node->namespaces[$part];
         }
 
-        $node->records[$record->name] = $record;
+        $node->types[$type->name] = $type;
     }
 
     #[Override]
@@ -61,8 +64,8 @@ final class RootType implements TypeScriptTypeInterface
             $ts .= $ns->render($ctx);
         }
 
-        foreach ($this->records as $rec) {
-            $ts .= $rec->render($ctx);
+        foreach ($this->types as $type) {
+            $ts .= $type->render($ctx);
         }
 
         return $ts;

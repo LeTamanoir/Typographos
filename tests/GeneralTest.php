@@ -33,7 +33,7 @@ it('can use auto-discovery', function (): void {
     new Generator()
         ->outputTo('tests/discovery-chain-generated.d.ts')
         ->withIndent('    ')
-        ->discoverFrom(__DIR__.'/Fixtures')
+        ->withDiscoverFrom(__DIR__.'/Fixtures')
         ->generate();
 
     expect(file_get_contents('tests/discovery-chain-generated.d.ts'))
@@ -45,7 +45,7 @@ it('cannot discover from broken directory', function (): void {
         fn () => new Generator()
             ->outputTo('tests/discovery-chain-generated.d.ts')
             ->withIndent('    ')
-            ->discoverFrom(__DIR__.'/unknown')
+            ->withDiscoverFrom(__DIR__.'/unknown')
             ->generate(),
     )
         ->toThrow(RuntimeException::class, 'Auto discover directory not found: '.__DIR__.'/unknown');
@@ -92,7 +92,7 @@ it('can use discoverFrom fluent interface', function (): void {
     $generator = new Generator;
 
     $generator
-        ->discoverFrom(__DIR__.'/Fixtures')
+        ->withDiscoverFrom(__DIR__.'/Fixtures')
         ->withIndent('    ')
         ->outputTo('tests/discovery-chain-generated.d.ts');
 

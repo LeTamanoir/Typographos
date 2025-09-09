@@ -15,9 +15,9 @@ final class NamespaceType implements TypeScriptTypeInterface
     public array $namespaces = [];
 
     /**
-     * @var array<string, RecordType>
+     * @var array<string, TypeScriptTypeInterface>
      */
-    public array $records = [];
+    public array $types = [];
 
     public function __construct(
         public string $name,
@@ -36,8 +36,8 @@ final class NamespaceType implements TypeScriptTypeInterface
             $ts .= $ns->render($ctx->increaseDepth());
         }
 
-        foreach ($this->records as $rec) {
-            $ts .= $rec->render($ctx->increaseDepth());
+        foreach ($this->types as $t) {
+            $ts .= $t->render($ctx->increaseDepth());
         }
 
         $ts .= $indent . "}\n";
