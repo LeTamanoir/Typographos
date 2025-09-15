@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "carthage-software/mago": "1.0.0-beta.13",
-        "pestphp/pest": "^3.8",
+        "pestphp/pest": "^4.1",
         "symfony/var-dumper": "^7.3"
     },
     "autoload": {
