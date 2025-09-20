@@ -7,6 +7,8 @@ Generate TS types from your PHP classes.
 <!-- Packagist badges (uncomment after publishing) -->
 <!-- [![Latest Version on Packagist](https://img.shields.io/packagist/v/letamanoir/typographos.svg?style=flat-square)](https://packagist.org/packages/letamanoir/typographos) -->
 [![Tests](https://img.shields.io/github/actions/workflow/status/LeTamanoir/Typographos/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/LeTamanoir/Typographos/actions/workflows/run-tests.yml)
+[![Lint](https://img.shields.io/github/actions/workflow/status/LeTamanoir/Typographos/run-lint.yml?branch=main&label=tests&style=flat-square)](https://github.com/LeTamanoir/Typographos/actions/workflows/run-lint.yml)
+[![Format](https://img.shields.io/github/actions/workflow/status/LeTamanoir/Typographos/run-format.yml?branch=main&label=tests&style=flat-square)](https://github.com/LeTamanoir/Typographos/actions/workflows/run-format.yml)
 <!-- [![Total Downloads](https://img.shields.io/packagist/dt/letamanoir/typographos.svg?style=flat-square)](https://packagist.org/packages/letamanoir/typographos) -->
 
 
