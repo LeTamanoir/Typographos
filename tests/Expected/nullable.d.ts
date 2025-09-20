@@ -5,7 +5,7 @@ declare namespace Typographos {
                 maybeString: string | null
                 maybeInt: number | null
                 maybeSelf: Typographos.Tests.Fixtures.Nullable | null
-                maybeDate: unknown | null
+                maybeDate: unknown
             }
         }
     }

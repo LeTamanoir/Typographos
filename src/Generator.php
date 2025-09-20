@@ -10,6 +10,9 @@ use Typographos\Context\GenerationContext;
 use Typographos\Context\RenderContext;
 use Typographos\Enums\EnumStyle;
 use Typographos\Enums\RecordStyle;
+use Typographos\Interfaces\Type;
+use Typographos\Types\EnumType;
+use Typographos\Types\RecordType;
 use Typographos\Types\RootType;
 
 final class Generator
@@ -27,6 +30,12 @@ final class Generator
     public array $typeReplacements = [];
 
     /**
+     * Path to the Composer class map
+     * Used to discover classes when using auto-discovery
+     */
+    public string $composerClassMapPath = 'vendor/composer/autoload_classmap.php';
+
+    /**
      * Directories to auto-discover classes from
      *
      * @var string[]
@@ -36,7 +45,7 @@ final class Generator
     /**
      * File path to write the generated types to
      */
-    public string $filePath = 'generated.d.ts';
+    public string $outputPath = 'generated.d.ts';
 
     /**
      * Style of enums to generate
@@ -50,10 +59,22 @@ final class Generator
 
     /**
      * Set the directory to auto-discover classes from
+     *
+     * @param  string[]  $directories
      */
-    public function withDiscoverFrom(string ...$directories): self
+    public function withDiscovery(array $directories): self
     {
-        $this->discoverDirectories = array_merge($this->discoverDirectories, $directories);
+        $this->discoverDirectories = $directories;
+
+        return $this;
+    }
+
+    /**
+     * Set the Composer class map path
+     */
+    public function withComposerClassMapPath(string $path): self
+    {
+        $this->composerClassMapPath = $path;
 
         return $this;
     }
@@ -61,9 +82,9 @@ final class Generator
     /**
      * Set the output file path
      */
-    public function outputTo(string $filePath): self
+    public function withOutputPath(string $path): self
     {
-        $this->filePath = $filePath;
+        $this->outputPath = $path;
 
         return $this;
     }
@@ -117,9 +138,10 @@ final class Generator
     public function generate(array $classNames = []): void
     {
         if (count($this->discoverDirectories) > 0) {
-            foreach ($this->discoverDirectories as $directory) {
-                $classNames = array_unique(array_merge($classNames, ClassDiscovery::discover($directory)));
-            }
+            $classNames = array_unique(array_merge($classNames, ClassDiscovery::discover(
+                composerClassMapPath: $this->composerClassMapPath,
+                directories: $this->discoverDirectories,
+            )));
         }
 
         if (count($classNames) === 0) {
@@ -132,7 +154,18 @@ final class Generator
             parentProperty: null,
         );
 
-        $root = RootType::from($genCtx);
+        /** @var  array<class-string, Type> */
+        $types = [];
+
+        while ($className = $genCtx->queue->shift()) {
+            $type = enum_exists($className)
+                ? EnumType::from($genCtx, $className)
+                : RecordType::from($genCtx, $className);
+
+            $types[$className] = $type;
+        }
+
+        $root = RootType::fromTypes($types);
 
         $renderCtx = new RenderContext(
             indent: $this->indent,
@@ -143,8 +176,11 @@ final class Generator
 
         $ts = $root->render($renderCtx);
 
-        if (file_exists($this->filePath) && !is_writable($this->filePath) || !file_put_contents($this->filePath, $ts)) {
-            throw new RuntimeException('Failed to write generated types to file ' . $this->filePath);
+        if (
+            file_exists($this->outputPath) && !is_writable($this->outputPath)
+            || !file_put_contents($this->outputPath, $ts)
+        ) {
+            throw new RuntimeException('Failed to write generated types to file ' . $this->outputPath);
         }
     }
 }

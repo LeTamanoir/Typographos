@@ -13,7 +13,7 @@ afterEach(function (): void {
 
 it('can generate unions', function (): void {
     new Generator()
-        ->outputTo('tests/unions-generated.d.ts')
+        ->withOutputPath('tests/unions-generated.d.ts')
         ->withIndent('    ')
         ->generate([Unions::class]);
 

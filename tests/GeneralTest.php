@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Typographos\Generator;
+use Typographos\Tests\Fixtures\Attributes;
 use Typographos\Tests\Fixtures\Scalars;
 
 afterEach(function (): void {
@@ -22,7 +23,7 @@ afterEach(function (): void {
 
 it('can generate to a custom path', function (): void {
     new Generator()
-        ->outputTo('tests/custom-path.d.ts')
+        ->withOutputPath('tests/custom-path.d.ts')
         ->withIndent('    ')
         ->generate([Scalars::class]);
 
@@ -31,10 +32,9 @@ it('can generate to a custom path', function (): void {
 
 it('can use auto-discovery', function (): void {
     new Generator()
-        ->outputTo('tests/discovery-chain-generated.d.ts')
+        ->withOutputPath('tests/discovery-chain-generated.d.ts')
         ->withIndent('    ')
-        ->withDiscoverFrom(__DIR__.'/Fixtures')
-        ->generate();
+        ->generate([Attributes::class]);
 
     expect(file_get_contents('tests/discovery-chain-generated.d.ts'))
         ->toBe(file_get_contents('tests/Expected/attributes.d.ts'));
@@ -43,9 +43,9 @@ it('can use auto-discovery', function (): void {
 it('cannot discover from broken directory', function (): void {
     expect(
         fn () => new Generator()
-            ->outputTo('tests/discovery-chain-generated.d.ts')
+            ->withOutputPath('tests/discovery-chain-generated.d.ts')
             ->withIndent('    ')
-            ->withDiscoverFrom(__DIR__.'/unknown')
+            ->withDiscovery([__DIR__.'/unknown'])
             ->generate(),
     )
         ->toThrow(RuntimeException::class, 'Auto discover directory not found: '.__DIR__.'/unknown');
@@ -54,7 +54,7 @@ it('cannot discover from broken directory', function (): void {
 it('cannot generate nothing', function (): void {
     expect(
         fn () => new Generator()
-            ->outputTo('tests/discovery-chain-generated.d.ts')
+            ->withOutputPath('tests/discovery-chain-generated.d.ts')
             ->withIndent('    ')
             ->generate(),
     )
@@ -66,7 +66,7 @@ it('cannot write to broken destination', function (): void {
     chmod('tests/broken-file.d.ts', 0);
 
     expect(fn () => new Generator()
-        ->outputTo('tests/broken-file.d.ts')
+        ->withOutputPath('tests/broken-file.d.ts')
         ->withIndent('    ')
         ->generate([Scalars::class]))
         ->toThrow(RuntimeException::class, 'Failed to write generated types to file tests/broken-file.d.ts');
@@ -82,19 +82,19 @@ it('can use fluent withTypeReplacement method', function (): void {
 
     $generator
         ->withTypeReplacement('int', 'number')
-        ->outputTo('tests/fluent-type-replacement.d.ts')
+        ->withOutputPath('tests/fluent-type-replacement.d.ts')
         ->generate([Scalars::class]);
 
     expect(file_get_contents('tests/fluent-type-replacement.d.ts'))->toContain('number');
 });
 
-it('can use discoverFrom fluent interface', function (): void {
+it('can use withDiscovery fluent interface', function (): void {
     $generator = new Generator;
 
     $generator
-        ->withDiscoverFrom(__DIR__.'/Fixtures')
+        ->withDiscovery([__DIR__.'/Fixtures'])
         ->withIndent('    ')
-        ->outputTo('tests/discovery-chain-generated.d.ts');
+        ->withOutputPath('tests/discovery-chain-generated.d.ts');
 
     expect($generator)->toBeInstanceOf(Generator::class);
 

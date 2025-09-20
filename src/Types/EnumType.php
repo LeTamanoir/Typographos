@@ -7,7 +7,6 @@ namespace Typographos\Types;
 use BackedEnum;
 use Override;
 use ReflectionEnum;
-use ReflectionEnumUnitCase;
 use Typographos\Context\GenerationContext;
 use Typographos\Context\RenderContext;
 use Typographos\Enums\EnumStyle;

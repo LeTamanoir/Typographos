@@ -47,8 +47,8 @@ class User
 use Typographos\Generator;
 
 new Generator()
-    ->discoverFrom(__DIR__.'/app/DTO')
-    ->outputTo('generated.d.ts')
+    ->withDiscovery(__DIR__.'/app/DTO')
+    ->withOutputPath('generated.d.ts')
     ->withIndent("\t")
     ->generate();
 ```
@@ -85,14 +85,14 @@ use Typographos\Generator;
 
 // Simple usage
 new Generator()
-    ->discoverFrom('src')                           // recursively scan for #[TypeScript]
-    ->outputTo('types.d.ts')                        // output file path
+    ->withDiscovery('src')                           // recursively scan for #[TypeScript]
+    ->withOutputPath('types.d.ts')                        // output file path
     ->generate();
 
 // Advanced configuration
 new Generator()
-    ->discoverFrom(__DIR__.'/app/DTO')
-    ->outputTo('resources/js/types.d.ts')
+    ->withDiscovery(__DIR__.'/app/DTO')
+    ->withOutputPath('resources/js/types.d.ts')
     ->withIndent('    ')                            // default: "\t"
     ->withEnumsStyle(EnumStyle::TYPES)              // ENUMS (default) or TYPES
     ->withRecordsStyle(RecordStyle::TYPES)          // INTERFACES (default) or TYPES
@@ -103,9 +103,9 @@ new Generator()
 
 #### Usage Notes
 
-- **Auto-discovery**: Use `->discoverFrom('path')` to recursively scan for classes with `#[TypeScript]` attribute
+- **Auto-discovery**: Use `->withDiscovery('path')` to recursively scan for classes with `#[TypeScript]` attribute
 - **Explicit classes**: Pass class names to `->generate(['App\\DTO\\User', 'App\\DTO\\Post'])` to skip discovery
-- **Output**: Use `->outputTo('file.d.ts')` to specify the output file path
+- **Output**: Use `->withOutputPath('file.d.ts')` to specify the output file path
 - **Property filtering**: Only public properties are emitted
 - **Array types**: Requires PHPDoc `@var` or constructor `@param` for `array`-typed properties
 
@@ -297,18 +297,18 @@ use Typographos\Generator;
 
 // Simple usage - generates and writes to file
 new Generator()
-    ->discoverFrom('src/DTOs')
-    ->outputTo('types.d.ts')
+    ->withDiscovery('src/DTOs')
+    ->withOutputPath('types.d.ts')
     ->withIndent("\t")
     ->generate();
 
 // Advanced configuration with type replacements
 new Generator()
-    ->discoverFrom('app/Models')
+    ->withDiscovery('app/Models')
     ->withTypeReplacement(\DateTime::class, 'string')
     ->withTypeReplacement('int', 'bigint')
     ->withIndent('    ')
-    ->outputTo('api-types.d.ts')
+    ->withOutputPath('api-types.d.ts')
     ->generate();
 
 // Explicit class list (skips auto-discovery)
@@ -322,8 +322,8 @@ new Generator()
 ```
 
 **Key methods:**
-- `discoverFrom(string $directory)`: Auto-discover classes with `#[TypeScript]` attribute
-- `outputTo(string $filePath)`: Set output file path
+- `withDiscovery(string $directory)`: Auto-discover classes with `#[TypeScript]` attribute
+- `withOutputPath(string $filePath)`: Set output file path
 - `withIndent(string $indent)`: Set indentation style (default: `"\t"`)
 - `withEnumsStyle(EnumStyle $style)`: Set enum output style (`ENUMS` or `TYPES`)
 - `withRecordsStyle(RecordStyle $style)`: Set record output style (`INTERFACES` or `TYPES`) 

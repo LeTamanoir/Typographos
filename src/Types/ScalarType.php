@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Typographos\Types;
 
 use Override;
-use Typographos\Attributes\LiteralType;
 use Typographos\Context\GenerationContext;
 use Typographos\Context\RenderContext;
 use Typographos\Exceptions\InvalidArgumentException;
@@ -18,26 +17,13 @@ enum ScalarType implements Type
     case unknown;
     case object;
     case null;
-    case undefined;
     case string;
     case true;
     case false;
     case any;
-    case never;
 
-    public static function from(GenerationContext $ctx, string $phpScalar): self|RawType
+    public static function from(GenerationContext $ctx, string $phpScalar): self
     {
-        if ($ctx->parentProperty !== null) {
-            $attrs = $ctx->parentProperty->getAttributes();
-            foreach ($attrs as $attr) {
-                if ($attr->getName() === LiteralType::class || is_subclass_of($attr->getName(), LiteralType::class)) {
-                    /** @var LiteralType */
-                    $instance = $attr->newInstance();
-                    return new RawType($instance->literal);
-                }
-            }
-        }
-
         return match ($phpScalar) {
             'int', 'float' => self::number,
             'string' => self::string,
@@ -48,6 +34,14 @@ enum ScalarType implements Type
             'true' => self::true,
             'false' => self::false,
             default => throw InvalidArgumentException::fromCtx($ctx, 'Unsupported scalar type ' . $phpScalar),
+        };
+    }
+
+    public function implicitlyNullable(): bool
+    {
+        return match ($this) {
+            self::null, self::any, self::unknown => true,
+            default => false,
         };
     }
 

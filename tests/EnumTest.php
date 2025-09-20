@@ -15,7 +15,7 @@ afterEach(function (): void {
 
 it('can generate enums', function (): void {
     new Generator()
-        ->outputTo('tests/enum-literals-generated.d.ts')
+        ->withOutputPath('tests/enum-literals-generated.d.ts')
         ->withIndent('    ')
         ->generate([WithEnums::class, StringEnum::class, IntEnum::class]);
 
