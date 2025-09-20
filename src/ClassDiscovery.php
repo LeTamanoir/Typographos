@@ -56,13 +56,15 @@ final class ClassDiscovery
         return $classes;
     }
 
+    /**
+     * Get the Composer class map
+     * @return array<class-string, string>
+     */
     private static function getComposerClassMap(string $composerClassMapPath): array
     {
         if (file_exists($composerClassMapPath)) {
-            $classMap = require $composerClassMapPath;
-            if (is_array($classMap)) {
-                return $classMap;
-            }
+            /** @var array<class-string, string> */
+            return require $composerClassMapPath;
         }
         throw new RuntimeException('Cannot load Composer class map from ' . $composerClassMapPath);
     }

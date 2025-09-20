@@ -78,7 +78,7 @@ final class TypeConverter
         if (Utils::isBuiltinType($type)) {
             $ts = Utils::isArrayType($type) ? ArrayType::from($ctx, $type) : ScalarType::from($ctx, $type);
 
-            if ($allowsNull && !$ts->implicitlyNullable()) {
+            if ($allowsNull && ($ts instanceof ScalarType ? !$ts->implicitlyNullable() : true)) {
                 return new UnionType([$ts, ScalarType::null]);
             }
 
@@ -92,7 +92,6 @@ final class TypeConverter
             return ScalarType::unknown;
         }
 
-        // check if the property has the InlineType attribute
         if (self::shouldInline($ctx)) {
             $ts = enum_exists($type) ? InlineEnumType::from($ctx, $type) : InlineRecordType::from($ctx, $type);
         } else {
@@ -121,12 +120,11 @@ final class TypeConverter
         // Check for #[Literal] attribute
         $literalAttrs = $ctx->parentProperty->getAttributes(Literal::class);
         if (count($literalAttrs) === 1) {
-            $literal = $literalAttrs[0]->newInstance();
-            $value = match (gettype($literal->value)) {
-                'string' => self::shouldQuoteString($literal->value) ? '"' . $literal->value . '"' : $literal->value,
-                'boolean' => $literal->value ? 'true' : 'false',
-                'NULL' => 'null',
-                default => (string) $literal->value,
+            $literal = $literalAttrs[0]->newInstance()->value;
+            $value = match (true) {
+                is_string($literal) => '"' . $literal . '"',
+                is_bool($literal) => $literal ? 'true' : 'false',
+                default => (string) $literal,
             };
             $ts = new RawType($value);
 
@@ -145,11 +143,5 @@ final class TypeConverter
         }
 
         return null;
-    }
-
-    private static function shouldQuoteString(string $value): bool
-    {
-        // Don't quote strings that look like TypeScript identifiers/references (e.g., "MyEnum.VALUE")
-        return !preg_match('/^[A-Z][a-zA-Z0-9]*\.[A-Z_][A-Z0-9_]*$/', $value);
     }
 }

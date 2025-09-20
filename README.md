@@ -7,6 +7,8 @@ Generate TS types from your PHP classes.
 <!-- Packagist badges (uncomment after publishing) -->
 <!-- [![Latest Version on Packagist](https://img.shields.io/packagist/v/letamanoir/typographos.svg?style=flat-square)](https://packagist.org/packages/letamanoir/typographos) -->
 [![Tests](https://img.shields.io/github/actions/workflow/status/LeTamanoir/Typographos/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/LeTamanoir/Typographos/actions/workflows/run-tests.yml)
+[![Lint](https://img.shields.io/github/actions/workflow/status/LeTamanoir/Typographos/run-lint.yml?branch=main&label=lint&style=flat-square)](https://github.com/LeTamanoir/Typographos/actions/workflows/run-lint.yml)
+[![Format](https://img.shields.io/github/actions/workflow/status/LeTamanoir/Typographos/run-format.yml?branch=main&label=format&style=flat-square)](https://github.com/LeTamanoir/Typographos/actions/workflows/run-format.yml)
 <!-- [![Total Downloads](https://img.shields.io/packagist/dt/letamanoir/typographos.svg?style=flat-square)](https://packagist.org/packages/letamanoir/typographos) -->
 
 
@@ -69,7 +71,7 @@ declare namespace App {
 
 - **Zero-configuration setup**: Just add `#[TypeScript]` to your PHP classes and generate types automatically
 - **Smart type detection**: Automatically converts PHP types to their TypeScript equivalents with full nullable and union type support
-- **Flexible inline types**: Use `#[InlineType]` to embed simple objects directly instead of creating separate interfaces  
+- **Flexible inline types**: Use `#[Inline]` to embed simple objects directly instead of creating separate interfaces  
 - **Rich array support**: Handles complex array types like `list<T>`, `non-empty-list<T>`, and `array<K,V>` from PHPDoc annotations
 - **PHP enum support**: Automatically converts PHP enums to TypeScript enums or union types
 - **Flexible output styles**: Generate interfaces or types for records, enums or union types for enums
@@ -153,7 +155,7 @@ class Task
         public string $title,
         public Status $status,
         public Priority $priority,
-        #[InlineType]                    // Inline enum as union type
+        #[Inline]                    // Inline enum as union type
         public Status $inlineStatus,
     ) {}
 }
@@ -233,10 +235,10 @@ export type User = {
 
 ### Example: inline records
 
-Use the `#[InlineType]` attribute to inline class types instead of creating separate interfaces:
+Use the `#[Inline]` attribute to inline class types instead of creating separate interfaces:
 
 ```php
-use Typographos\Attributes\InlineType;
+use Typographos\Attributes\Inline;
 use Typographos\Attributes\TypeScript;
 
 #[TypeScript]
@@ -254,7 +256,7 @@ class User
 {
     public function __construct(
         public string $name,
-        #[InlineType]                // ← Inline this class
+        #[Inline]                // ← Inline this class
         public Address $address,
         public Address $mailingAddress, // ← Reference (separate interface)
     ) {}
