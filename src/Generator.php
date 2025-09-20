@@ -154,7 +154,7 @@ final class Generator
             parentProperty: null,
         );
 
-        /** @var  array<class-string, Type> */
+        /** @var  array<class-string, RecordType|EnumType> */
         $types = [];
 
         while ($className = $genCtx->queue->shift()) {

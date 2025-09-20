@@ -10,6 +10,6 @@ use Attribute;
 final class Literal
 {
     public function __construct(
-        public string|int|float|bool|null $value,
+        public string|int|float|bool $value,
     ) {}
 }
