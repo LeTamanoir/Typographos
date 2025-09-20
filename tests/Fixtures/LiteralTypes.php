@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Typographos\Tests\Fixtures;
 
-use Typographos\Attributes\LiteralType;
+use Typographos\Attributes\Literal;
+use Typographos\Attributes\Template;
 
 class LiteralTypes
 {
     public function __construct(
-        #[LiteralType('42')]
+        #[Literal(42)]
         public int $literalNumber,
-        #[LiteralType('"hello"')]
+        #[Literal('hello')]
         public string $literalString,
-        #[LiteralType('true')]
+        #[Literal(true)]
         public bool $literalBoolean,
-        #[LiteralType('MyEnum.VALUE')]
+        #[Literal('MyEnum.VALUE')]
         public mixed $enumReference,
-        #[LiteralType('`template-${string}`')]
+        #[Template('template-{string}')]
         public string $templateLiteral,
-        #[LiteralType('null')]
+        #[Literal(null)]
         public mixed $literalNull,
         public string $regularProperty,
     ) {}

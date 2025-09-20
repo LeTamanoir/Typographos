@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Typographos;
 
 use ReflectionClass;
-use Typographos\Attributes\InlineType;
-use Typographos\Attributes\LiteralType;
+use Typographos\Attributes\Inline;
+use Typographos\Attributes\Literal;
+use Typographos\Attributes\Template;
 use Typographos\Context\GenerationContext;
 use Typographos\Interfaces\Type;
 use Typographos\Types\ArrayType;
@@ -57,7 +58,12 @@ final class TypeConverter
             $type = substr($type, 1);
         }
 
-        // check for type replacements first
+        // check for #[Literal] and #[Template] attributes first
+        if ($attrType = self::checkAttributes($ctx, $allowsNull)) {
+            return $attrType;
+        }
+
+        // check for type replacements
         if (isset($ctx->typeReplacements[$type])) {
             $ts = new RawType($ctx->typeReplacements[$type]);
 
@@ -66,11 +72,6 @@ final class TypeConverter
             }
 
             return $ts;
-        }
-
-        // handle #[LiteralType]
-        if ($literal = self::hasLiteral($ctx)) {
-            return $literal;
         }
 
         // handle built-in types
@@ -108,21 +109,47 @@ final class TypeConverter
 
     private static function shouldInline(GenerationContext $ctx): bool
     {
-        return $ctx->parentProperty !== null && count($ctx->parentProperty->getAttributes(InlineType::class)) > 0;
+        return $ctx->parentProperty !== null && count($ctx->parentProperty->getAttributes(Inline::class)) > 0;
     }
 
-    private static function hasLiteral(GenerationContext $ctx): null|RawType
+    private static function checkAttributes(GenerationContext $ctx, bool $allowsNull): null|Type
     {
-        if ($ctx->parentProperty !== null) {
-            foreach ($ctx->parentProperty->getAttributes() as $attr) {
-                $instance = $attr->newInstance();
+        if ($ctx->parentProperty === null) {
+            return null;
+        }
 
-                if ($instance instanceof LiteralType) {
-                    return new RawType($instance->literal);
-                }
-            }
+        // Check for #[Literal] attribute
+        $literalAttrs = $ctx->parentProperty->getAttributes(Literal::class);
+        if (count($literalAttrs) === 1) {
+            $literal = $literalAttrs[0]->newInstance();
+            $value = match (gettype($literal->value)) {
+                'string' => self::shouldQuoteString($literal->value) ? '"' . $literal->value . '"' : $literal->value,
+                'boolean' => $literal->value ? 'true' : 'false',
+                'NULL' => 'null',
+                default => (string) $literal->value,
+            };
+            $ts = new RawType($value);
+
+            return $allowsNull ? new UnionType([$ts, ScalarType::null]) : $ts;
+        }
+
+        // Check for #[Template] attribute
+        $templateAttrs = $ctx->parentProperty->getAttributes(Template::class);
+        if (count($templateAttrs) === 1) {
+            $template = $templateAttrs[0]->newInstance();
+            $pattern = str_replace('{string}', '${string}', $template->pattern);
+            $pattern = str_replace('{number}', '${number}', $pattern);
+            $ts = new RawType('`' . $pattern . '`');
+
+            return $allowsNull ? new UnionType([$ts, ScalarType::null]) : $ts;
         }
 
         return null;
+    }
+
+    private static function shouldQuoteString(string $value): bool
+    {
+        // Don't quote strings that look like TypeScript identifiers/references (e.g., "MyEnum.VALUE")
+        return !preg_match('/^[A-Z][a-zA-Z0-9]*\.[A-Z_][A-Z0-9_]*$/', $value);
     }
 }
