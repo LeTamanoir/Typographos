@@ -34,3 +34,19 @@ it('handles special characters', function (): void {
     expect(Utils::tsProp('#hash'))->toBe('"#hash"');
     expect(Utils::tsProp('percent%'))->toBe('"percent%"');
 });
+
+it('handles unbalanced closing characters in splitTopLevel', function (): void {
+    // Test case where there are more closing characters than opening ones
+    // This should trigger the depth check and decrement logic on line 142
+    $result = Utils::splitTopLevel('Type>|Other>>', '|');
+
+    // The extra closing characters should not cause issues
+    expect($result)->toBe(['Type>', 'Other>>']);
+});
+
+it('handles basic splitTopLevel functionality', function (): void {
+    // Test case without complex nesting first
+    $result = Utils::splitTopLevel('string|int|bool', '|');
+
+    expect($result)->toBe(['string', 'int', 'bool']);
+});
