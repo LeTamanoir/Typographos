@@ -16,12 +16,8 @@ class LiteralTypes
         public string $literalString,
         #[Literal(true)]
         public bool $literalBoolean,
-        #[Literal('MyEnum.VALUE')]
-        public mixed $enumReference,
         #[Template('template-{string}')]
         public string $templateLiteral,
-        #[Literal(null)]
-        public mixed $literalNull,
         public string $regularProperty,
     ) {}
 }
