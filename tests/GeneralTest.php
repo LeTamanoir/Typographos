@@ -91,14 +91,27 @@ it('can use fluent withTypeReplacement method', function (): void {
 it('can use withDiscovery fluent interface', function (): void {
     $generator = new Generator;
 
-    $generator
+    $configuredGenerator = $generator
         ->withDiscovery([__DIR__.'/Fixtures'])
         ->withIndent('    ')
         ->withOutputPath('tests/discovery-chain-generated.d.ts');
 
-    expect($generator)->toBeInstanceOf(Generator::class);
+    expect($configuredGenerator)->toBeInstanceOf(Generator::class);
+    expect($configuredGenerator)->not->toBe($generator); // Should be different instance
 
     // Generate to verify the chain worked
-    $generator->generate([Scalars::class]);
+    $configuredGenerator->generate([Scalars::class]);
     expect(file_exists('tests/discovery-chain-generated.d.ts'))->toBeTrue();
+});
+
+it('can use withComposerClassMapPath fluent interface', function (): void {
+    $generator = new Generator;
+
+    $customPath = '/custom/path/to/classmap.php';
+    $result = $generator->withComposerClassMapPath($customPath);
+
+    expect($result)->toBeInstanceOf(Generator::class);
+    expect($result)->not->toBe($generator); // Should return new instance (immutable pattern)
+    expect($result->composerClassMapPath)->toBe($customPath);
+    expect($generator->composerClassMapPath)->toBe('vendor/composer/autoload_classmap.php'); // Original unchanged
 });

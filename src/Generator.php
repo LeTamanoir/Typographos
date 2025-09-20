@@ -64,9 +64,10 @@ final class Generator
      */
     public function withDiscovery(array $directories): self
     {
-        $this->discoverDirectories = $directories;
+        $clone = clone $this;
+        $clone->discoverDirectories = $directories;
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -74,9 +75,10 @@ final class Generator
      */
     public function withComposerClassMapPath(string $path): self
     {
-        $this->composerClassMapPath = $path;
+        $clone = clone $this;
+        $clone->composerClassMapPath = $path;
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -84,9 +86,10 @@ final class Generator
      */
     public function withOutputPath(string $path): self
     {
-        $this->outputPath = $path;
+        $clone = clone $this;
+        $clone->outputPath = $path;
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -94,9 +97,10 @@ final class Generator
      */
     public function withEnumsStyle(EnumStyle $style): self
     {
-        $this->enumStyle = $style;
+        $clone = clone $this;
+        $clone->enumStyle = $style;
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -104,9 +108,10 @@ final class Generator
      */
     public function withRecordsStyle(RecordStyle $style): self
     {
-        $this->recordStyle = $style;
+        $clone = clone $this;
+        $clone->recordStyle = $style;
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -114,9 +119,10 @@ final class Generator
      */
     public function withIndent(string $indent): self
     {
-        $this->indent = $indent;
+        $clone = clone $this;
+        $clone->indent = $indent;
 
-        return $this;
+        return $clone;
     }
 
     /**
@@ -124,9 +130,10 @@ final class Generator
      */
     public function withTypeReplacement(string $phpType, string $tsType): self
     {
-        $this->typeReplacements[$phpType] = $tsType;
+        $clone = clone $this;
+        $clone->typeReplacements[$phpType] = $tsType;
 
-        return $this;
+        return $clone;
     }
 
     /**
