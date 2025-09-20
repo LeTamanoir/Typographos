@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace Typographos\Types;
 
 use Override;
-use ReflectionClass;
-use Typographos\Context\GenerationContext;
 use Typographos\Context\RenderContext;
 use Typographos\Interfaces\Type;
-use Typographos\TypeConverter;
 use Typographos\Utils;
 
 final class RootType implements Type
@@ -24,17 +21,15 @@ final class RootType implements Type
      */
     public array $types = [];
 
-    public static function from(GenerationContext $ctx): self
+    /**
+     * @param array<string, RecordType|EnumType> $types
+     */
+    public static function fromTypes(array $types): self
     {
         $root = new self();
 
-        // process all classes in queue (queue may grow during processing)
-        while ($className = $ctx->queue->shift()) {
-            $type = new ReflectionClass($className)->isEnum()
-                ? EnumType::from($ctx, $className)
-                : RecordType::from($ctx, $className);
-
-            $root->addType($className, $type);
+        foreach ($types as $fqcn => $type) {
+            $root->addType($fqcn, $type);
         }
 
         return $root;

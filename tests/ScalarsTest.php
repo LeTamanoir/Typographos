@@ -13,7 +13,7 @@ afterEach(function (): void {
 
 it('can generate scalars', function (): void {
     new Generator()
-        ->outputTo('tests/scalars-generated.d.ts')
+        ->withOutputPath('tests/scalars-generated.d.ts')
         ->withIndent('    ')
         ->generate([Scalars::class]);
 
@@ -22,7 +22,7 @@ it('can generate scalars', function (): void {
 
 it('can use type replacer', function (): void {
     new Generator()
-        ->outputTo('tests/scalars-generated.d.ts')
+        ->withOutputPath('tests/scalars-generated.d.ts')
         ->withIndent('    ')
         ->withTypeReplacement('int', 'custom_raw_typescript_type')
         ->generate([Scalars::class]);
@@ -33,7 +33,7 @@ it('can use type replacer', function (): void {
 
 it('can use custom indent', function (): void {
     new Generator()
-        ->outputTo('tests/scalars-generated.d.ts')
+        ->withOutputPath('tests/scalars-generated.d.ts')
         ->withIndent(' - ')
         ->generate([Scalars::class]);
 

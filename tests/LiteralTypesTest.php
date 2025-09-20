@@ -13,7 +13,7 @@ afterEach(function (): void {
 
 it('can generate literal types', function (): void {
     new Generator()
-        ->outputTo('tests/literal-types-generated.d.ts')
+        ->withOutputPath('tests/literal-types-generated.d.ts')
         ->withIndent('    ')
         ->generate([LiteralTypes::class]);
 

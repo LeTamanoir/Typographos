@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Typographos\Enums;
 
-enum EnumStyle: string
+enum EnumStyle
 {
-    case TYPES = 'types';
-    case ENUMS = 'enums';
+    case TYPES;
+    case ENUMS;
 }

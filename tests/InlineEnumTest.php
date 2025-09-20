@@ -16,7 +16,7 @@ afterEach(function (): void {
 
 it('can generate inline enums', function (): void {
     new Generator()
-        ->outputTo('tests/inline-enums-generated.d.ts')
+        ->withOutputPath('tests/inline-enums-generated.d.ts')
         ->withIndent('    ')
         ->withEnumsStyle(EnumStyle::TYPES)
         ->generate([WithInlineEnums::class, StringEnum::class, IntEnum::class]);

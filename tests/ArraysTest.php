@@ -21,7 +21,7 @@ afterEach(function (): void {
 
 it('can generate arrays', function (): void {
     new Generator()
-        ->outputTo('tests/arrays-generated.d.ts')
+        ->withOutputPath('tests/arrays-generated.d.ts')
         ->withIndent('    ')
         ->generate([Arrays::class]);
 
@@ -30,7 +30,7 @@ it('can generate arrays', function (): void {
 
 it('can handle invalid arrays', function (): void {
     $gen = new Generator()
-        ->outputTo('tests/arrays-generated.d.ts')
+        ->withOutputPath('tests/arrays-generated.d.ts')
         ->withIndent('    ');
 
     expect(fn () => $gen->generate([InvalidArrayVarDocBlock::class]))

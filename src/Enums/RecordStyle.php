@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Typographos\Enums;
 
-enum RecordStyle: string
+enum RecordStyle
 {
-    case TYPES = 'types';
-    case INTERFACES = 'interfaces';
+    case TYPES;
+    case INTERFACES;
 }

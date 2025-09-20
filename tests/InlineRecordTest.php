@@ -26,7 +26,7 @@ afterEach(function (): void {
 it('can generate inline records', function (): void {
     new Generator()
         ->withIndent("\t")
-        ->outputTo('tests/inline-generated.d.ts')
+        ->withOutputPath('tests/inline-generated.d.ts')
         ->generate([InlineRecords::class]);
 
     expect(file_get_contents('tests/inline-generated.d.ts'))->toBe(file_get_contents('tests/Expected/inline.d.ts'));

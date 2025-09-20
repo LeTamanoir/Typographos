@@ -13,7 +13,7 @@ afterEach(function (): void {
 
 it('can handle specific keywords', function (): void {
     new Generator()
-        ->outputTo('tests/child-generated.d.ts')
+        ->withOutputPath('tests/child-generated.d.ts')
         ->withIndent('    ')
         ->generate([Child::class]);
 

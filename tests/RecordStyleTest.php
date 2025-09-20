@@ -14,7 +14,7 @@ afterEach(function (): void {
 
 it('can generate records as types', function (): void {
     new Generator()
-        ->outputTo('tests/record-types-generated.d.ts')
+        ->withOutputPath('tests/record-types-generated.d.ts')
         ->withIndent('    ')
         ->withRecordsStyle(RecordStyle::TYPES)
         ->generate([SimpleRecord::class]);

@@ -6,6 +6,7 @@ namespace Typographos;
 
 use ReflectionClass;
 use Typographos\Attributes\InlineType;
+use Typographos\Attributes\LiteralType;
 use Typographos\Context\GenerationContext;
 use Typographos\Interfaces\Type;
 use Typographos\Types\ArrayType;
@@ -35,6 +36,7 @@ final class TypeConverter
         }
 
         if (count($parts) === 1) {
+            /** @var Type */
             return $parts[0];
         }
 
@@ -66,11 +68,16 @@ final class TypeConverter
             return $ts;
         }
 
+        // handle #[LiteralType]
+        if ($literal = self::hasLiteral($ctx)) {
+            return $literal;
+        }
+
         // handle built-in types
         if (Utils::isBuiltinType($type)) {
             $ts = Utils::isArrayType($type) ? ArrayType::from($ctx, $type) : ScalarType::from($ctx, $type);
 
-            if ($allowsNull && $type !== 'null' && $type !== 'mixed') {
+            if ($allowsNull && !$ts->implicitlyNullable()) {
                 return new UnionType([$ts, ScalarType::null]);
             }
 
@@ -80,21 +87,16 @@ final class TypeConverter
         // handle user-defined classes
         $userDefined = class_exists($type) && new ReflectionClass($type)->isUserDefined();
 
-        if ($userDefined) {
-            // check if the property has the InlineType attribute
-            $shouldInline =
-                $ctx->parentProperty !== null && count($ctx->parentProperty->getAttributes(InlineType::class)) > 0;
+        if (!$userDefined) {
+            return ScalarType::unknown;
+        }
 
-            if ($shouldInline) {
-                $ts = new ReflectionClass($type)->isEnum()
-                    ? InlineEnumType::from($ctx, $type)
-                    : InlineRecordType::from($ctx, $type);
-            } else {
-                $ctx->queue->enqueue($type);
-                $ts = new ReferenceType($type);
-            }
+        // check if the property has the InlineType attribute
+        if (self::shouldInline($ctx)) {
+            $ts = enum_exists($type) ? InlineEnumType::from($ctx, $type) : InlineRecordType::from($ctx, $type);
         } else {
-            $ts = ScalarType::unknown;
+            $ctx->queue->enqueue($type);
+            $ts = new ReferenceType($type);
         }
 
         if ($allowsNull) {
@@ -102,5 +104,25 @@ final class TypeConverter
         }
 
         return $ts;
+    }
+
+    private static function shouldInline(GenerationContext $ctx): bool
+    {
+        return $ctx->parentProperty !== null && count($ctx->parentProperty->getAttributes(InlineType::class)) > 0;
+    }
+
+    private static function hasLiteral(GenerationContext $ctx): null|RawType
+    {
+        if ($ctx->parentProperty !== null) {
+            foreach ($ctx->parentProperty->getAttributes() as $attr) {
+                $instance = $attr->newInstance();
+
+                if ($instance instanceof LiteralType) {
+                    return new RawType($instance->literal);
+                }
+            }
+        }
+
+        return null;
     }
 }

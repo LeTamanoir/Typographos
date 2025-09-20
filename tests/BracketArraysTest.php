@@ -13,7 +13,7 @@ afterEach(function (): void {
 
 it('can generate bracket array syntax', function (): void {
     new Generator()
-        ->outputTo('tests/bracket-arrays-generated.d.ts')
+        ->withOutputPath('tests/bracket-arrays-generated.d.ts')
         ->withIndent('    ')
         ->generate([BracketArrays::class]);
 

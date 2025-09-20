@@ -13,7 +13,7 @@ afterEach(function (): void {
 
 it('can generate nullable properties', function (): void {
     new Generator()
-        ->outputTo('tests/nullable-generated.d.ts')
+        ->withOutputPath('tests/nullable-generated.d.ts')
         ->withIndent('    ')
         ->generate([Nullable::class]);
 
