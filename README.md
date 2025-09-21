@@ -44,11 +44,11 @@ composer require letamanoir/typographos
 
 ## Documentation
 
-**📖 [Full Documentation](https://letamanoir.github.io/Typographos/)**
+**📖 [Full Documentation](https://typographos.dev/)**
 
-- [Quick Start](https://letamanoir.github.io/Typographos/quick-start) - Get up and running in minutes
-- [Guide](https://letamanoir.github.io/Typographos/guide/basic-usage) - Comprehensive usage examples
-- [API Reference](https://letamanoir.github.io/Typographos/api/generator) - Complete method documentation
+- [Quick Start](https://typographos.dev/quick-start) - Get up and running in minutes
+- [Guide](https://typographos.dev/guide/basic-usage) - Comprehensive usage examples
+- [API Reference](https://typographos.dev/api/generator) - Complete method documentation
 
 ## Contributing
 
