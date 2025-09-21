@@ -1,0 +1,120 @@
+---
+layout: landing
+content:
+  width: 100%
+---
+
+import { HomePage } from "vocs/components";
+
+<HomePage.Root>
+
+# Typographos
+
+<HomePage.Tagline>
+  Generate TypeScript types from your PHP classes
+</HomePage.Tagline>
+
+```bash [Composer]
+composer require letamanoir/typographos
+```
+
+<HomePage.Buttons>
+  <HomePage.Button href="/quick-start" variant="accent" className="!rounded-sm">
+    Get Started
+  </HomePage.Button>
+  <HomePage.Button href="/introduction" className="!rounded-sm">
+    Why Typographos?
+  </HomePage.Button>
+  <HomePage.Button
+    href="https://github.com/LeTamanoir/Typographos"
+    className="!rounded-sm"
+  >
+    GitHub
+  </HomePage.Button>
+</HomePage.Buttons>
+
+</HomePage.Root>
+
+<div className="mx-auto max-w-xl mt-20">
+## See It in Action
+
+Typographos transforms your PHP classes into perfectly typed TypeScript definitions with **minimal setup**.
+Just add one attribute to your PHP classes and your types **stay in sync** automatically.
+Built for **modern PHP 8.4+** with full support for **unions, nullables, and complex types**.
+
+</div>
+
+<div className="flex max-[1024px]:flex-col gap-4 mx-auto max-w-4xl mt-20">
+
+<div className="flex flex-col gap-4 flex-1">
+
+```php [app/DTO/User.php]
+<?php
+
+namespace App\DTO;
+
+use Typographos\Attributes\TypeScript;
+
+#[TypeScript]
+class User
+{
+    public function __construct(
+        public string $name,
+        public int $age,
+        public ?string $email = null,
+    ) {}
+}
+
+```
+
+</div>
+
+<div className="flex items-center">
+  <div className="flex items-center rounded-full size-12 bg-gray-50/5 p-2 border border-gray-50/10">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke="currentColor"
+      className="size-5"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 19.5 8.25 12l7.5-7.5"
+      />
+    </svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke="currentColor"
+      className="size-5"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+      />
+    </svg>
+  </div>
+</div>
+
+<div className="flex flex-col gap-4 flex-1 h-full">
+
+```ts twoslash [generated.d.ts]
+declare namespace App {
+  export namespace DTO {
+    export interface User {
+      name: string;
+      age: number;
+      email: string | null;
+    }
+  }
+}
+```
+
+</div>
+</div>
