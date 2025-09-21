@@ -1,6 +1,6 @@
-# 🏛️ Typographos 🏛️
+# 🏛️ Typographos
 
-Generate TS types from your PHP classes.
+Generate TypeScript types from your PHP classes.
 
 > ⚠️ **Early Development**: This package is in extremely early development and is not yet available on Packagist.
 
@@ -12,366 +12,43 @@ Generate TS types from your PHP classes.
 <!-- [![Total Downloads](https://img.shields.io/packagist/dt/letamanoir/typographos.svg?style=flat-square)](https://packagist.org/packages/letamanoir/typographos) -->
 
 
-## Requirements
+## Quick Example
 
-- PHP 8.4+
-
-## Installation
-
-Install via Composer:
-
-```bash
-composer require letamanoir/typographos
-```
-
-## Usage
-
-Annotate your DTOs with the provided attribute and run the generator.
-
-`app/DTO/User.php`:
+**Turn this PHP class:**
 ```php
-namespace App\DTO;
-
-use Typographos\Attributes\TypeScript;
-
 #[TypeScript]
 class User
 {
     public function __construct(
         public string $name,
         public int $age,
+        public ?string $email = null,
     ) {}
 }
 ```
 
-`codegen.php`:
-```php
-use Typographos\Generator;
-
-new Generator()
-    ->withDiscovery(__DIR__.'/app/DTO')
-    ->withOutputPath('generated.d.ts')
-    ->withIndent("\t")
-    ->generate();
-```
-
-`generated.d.ts`:
+**Into TypeScript types:**
 ```ts
-declare namespace App {
-    export namespace DTO {
-        export interface User {
-            name: string
-            age: number
-        }
-    }
-}
-```
-
-### Features
-
-- **Zero-configuration setup**: Just add `#[TypeScript]` to your PHP classes and generate types automatically
-- **Smart type detection**: Automatically converts PHP types to their TypeScript equivalents with full nullable and union type support
-- **Flexible inline types**: Use `#[Inline]` to embed simple objects directly instead of creating separate interfaces  
-- **Rich array support**: Handles complex array types like `list<T>`, `non-empty-list<T>`, and `array<K,V>` from PHPDoc annotations
-- **PHP enum support**: Automatically converts PHP enums to TypeScript enums or union types
-- **Flexible output styles**: Generate interfaces or types for records, enums or union types for enums
-- **Namespace preservation**: Maintains your PHP namespace structure in the generated TypeScript declarations
-- **Custom type mapping**: Replace any PHP type with custom TypeScript types (e.g., `DateTime` → `string`, `int` → `bigint`)
-- **Directory scanning**: Automatically discover all your DTOs from entire directories
-- **Clean output**: Generates properly formatted, readable TypeScript declaration files
-
-### Configuration
-
-```php
-use Typographos\Generator;
-
-// Simple usage
-new Generator()
-    ->withDiscovery('src')                           // recursively scan for #[TypeScript]
-    ->withOutputPath('types.d.ts')                        // output file path
-    ->generate();
-
-// Advanced configuration
-new Generator()
-    ->withDiscovery(__DIR__.'/app/DTO')
-    ->withOutputPath('resources/js/types.d.ts')
-    ->withIndent('    ')                            // default: "\t"
-    ->withEnumsStyle(EnumStyle::TYPES)              // ENUMS (default) or TYPES
-    ->withRecordsStyle(RecordStyle::TYPES)          // INTERFACES (default) or TYPES
-    ->withTypeReplacement(DateTime::class, 'string')
-    ->generate();
-
-```
-
-#### Usage Notes
-
-- **Auto-discovery**: Use `->withDiscovery('path')` to recursively scan for classes with `#[TypeScript]` attribute
-- **Explicit classes**: Pass class names to `->generate(['App\\DTO\\User', 'App\\DTO\\Post'])` to skip discovery
-- **Output**: Use `->withOutputPath('file.d.ts')` to specify the output file path
-- **Property filtering**: Only public properties are emitted
-- **Array types**: Requires PHPDoc `@var` or constructor `@param` for `array`-typed properties
-
-### Example: arrays via PHPDoc
-
-```php
-/** @var list<string> */
-public array $tags;
-
-/** @var array<string,int> */
-public array $scoresByUser;
-
-/** @var non-empty-list<list<string>> */
-public array $matrix;
-```
-
-### Example: PHP enums
-
-Typographos supports PHP backed enums and can generate them as either TypeScript enums or union types:
-
-```php
-use Typographos\Attributes\TypeScript;
-
-#[TypeScript]
-enum Status: string
-{
-    case PENDING = 'pending';
-    case ACTIVE = 'active';
-    case INACTIVE = 'inactive';
-}
-
-#[TypeScript]
-enum Priority: int
-{
-    case LOW = 1;
-    case MEDIUM = 2;
-    case HIGH = 3;
-    case URGENT = 4;
-}
-
-#[TypeScript]
-class Task
-{
-    public function __construct(
-        public string $title,
-        public Status $status,
-        public Priority $priority,
-        #[Inline]                    // Inline enum as union type
-        public Status $inlineStatus,
-    ) {}
-}
-```
-
-**Default output (EnumStyle::ENUMS):**
-```typescript
-declare namespace App {
-    export enum Status {
-        PENDING = "pending",
-        ACTIVE = "active", 
-        INACTIVE = "inactive",
-    }
-    export enum Priority {
-        LOW = 1,
-        MEDIUM = 2,
-        HIGH = 3,
-        URGENT = 4,
-    }
-    export interface Task {
-        title: string
-        status: Status
-        priority: Priority
-        inlineStatus: "pending" | "active" | "inactive"  // Inlined as union
-    }
-}
-```
-
-**With EnumStyle::TYPES:**
-```typescript
-declare namespace App {
-    export type Status = "pending" | "active" | "inactive"
-    export type Priority = 1 | 2 | 3 | 4
-    export interface Task {
-        title: string
-        status: Status
-        priority: Priority
-        inlineStatus: "pending" | "active" | "inactive"
-    }
-}
-```
-
-### Example: record styles
-
-Choose between TypeScript interfaces (default) or type aliases for your PHP classes:
-
-```php
-use Typographos\Enums\RecordStyle;
-use Typographos\Generator;
-
-// Generate as interfaces (default)
-new Generator()
-    ->withRecordsStyle(RecordStyle::INTERFACES)
-    ->generate([User::class]);
-
-// Generate as types
-new Generator()
-    ->withRecordsStyle(RecordStyle::TYPES)
-    ->generate([User::class]);
-```
-
-**RecordStyle::INTERFACES (default):**
-```typescript
 export interface User {
     name: string
     age: number
+    email: string | null
 }
 ```
 
-**RecordStyle::TYPES:**
-```typescript
-export type User = {
-    name: string
-    age: number
-}
-```
-
-### Example: inline records
-
-Use the `#[Inline]` attribute to inline class types instead of creating separate interfaces:
-
-```php
-use Typographos\Attributes\Inline;
-use Typographos\Attributes\TypeScript;
-
-#[TypeScript]
-class Address
-{
-    public function __construct(
-        public string $street,
-        public string $city,
-        public string $zipCode,
-    ) {}
-}
-
-#[TypeScript]
-class User
-{
-    public function __construct(
-        public string $name,
-        #[Inline]                // ← Inline this class
-        public Address $address,
-        public Address $mailingAddress, // ← Reference (separate interface)
-    ) {}
-}
-```
-
-Generated TypeScript:
-```typescript
-declare namespace App {
-  export namespace DTO {
-    export interface User {
-      name: string
-      address: {                    // ← Inlined
-        street: string
-        city: string
-        zipCode: string
-      }
-      mailingAddress: Address       // ← Reference
-    }
-    export interface Address {      // ← Separate interface for reference
-      street: string
-      city: string
-      zipCode: string
-    }
-  }
-}
-```
-
-**When to use inline records:**
-- Simple value objects that are only used in one place
-- Reducing the number of generated interfaces for better readability
-- Embedding small DTOs directly into parent types
-
-### Advanced Generation
-
-For advanced scenarios, the library provides a straightforward fluent interface. All generation happens through the main `Generator` class:
-
-```php
-use Typographos\Generator;
-
-// Simple usage - generates and writes to file
-new Generator()
-    ->withDiscovery('src/DTOs')
-    ->withOutputPath('types.d.ts')
-    ->withIndent("\t")
-    ->generate();
-
-// Advanced configuration with type replacements
-new Generator()
-    ->withDiscovery('app/Models')
-    ->withTypeReplacement(\DateTime::class, 'string')
-    ->withTypeReplacement('int', 'bigint')
-    ->withIndent('    ')
-    ->withOutputPath('api-types.d.ts')
-    ->generate();
-
-// Explicit class list (skips auto-discovery)
-new Generator()
-    ->withIndent("\t")
-    ->generate([
-        'App\\DTO\\User',
-        'App\\DTO\\Post',
-        'App\\DTO\\Comment',
-    ]);
-```
-
-**Key methods:**
-- `withDiscovery(string $directory)`: Auto-discover classes with `#[TypeScript]` attribute
-- `withOutputPath(string $filePath)`: Set output file path
-- `withIndent(string $indent)`: Set indentation style (default: `"\t"`)
-- `withEnumsStyle(EnumStyle $style)`: Set enum output style (`ENUMS` or `TYPES`)
-- `withRecordsStyle(RecordStyle $style)`: Set record output style (`INTERFACES` or `TYPES`) 
-- `withTypeReplacement(string $phpType, string $tsType)`: Replace PHP types with custom TypeScript types
-- `generate(array $classNames = [])`: Generate and write types (optionally specify classes explicitly)
-
-### Architecture
-
-The refactored architecture provides clean separation of concerns:
-
-- **`Generator`**: Main orchestrator with fluent interface that coordinates the entire generation process
-- **`ClassDiscovery`**: Static utility for finding classes with TypeScript attributes from directories
-- **`TypeResolver`**: Resolves PHP types, handling special cases like `array`, `self`, `parent`, and unions  
-- **`TypeConverter`**: Static utility that converts resolved PHP types to TypeScript type objects
-- **`Queue`**: Manages the processing queue of classes during generation
-
-The library uses static utility classes for optimal performance while maintaining an intuitive fluent API through the main `Generator` class.
-
-### Limitations and notes
-
-- Intersection types (`A&B`) are not supported and will throw.
-- Untyped public properties are emitted as `unknown`.
-- `self`/`parent` types are resolved to concrete class names before generation.
-- When writing to the destination file, ensure it is writable by the process.
-
-### Troubleshooting
-
-Common exceptions you might see:
-
-- `No classes to generate` — Call `generate()` with at least one FQCN or enable auto-discovery.
-- `Missing doc comment` — Add a PHPDoc `@var` (or constructor `@param`) for `array` properties.
-- `Intersection types are not supported` — Replace intersections with a supported shape.
-- `Unsupported array key type [...]` — Only string-like, int-like, or `array-key` keys are supported in `array<K,V>`.
-
-## Testing
+## Installation
 
 ```bash
-composer test
-composer test-coverage  # With coverage
-composer lint          # Static analysis
-composer format        # Code formatting
+composer require letamanoir/typographos
 ```
 
-## Changelog
+## Documentation
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+**📖 [Full Documentation](https://letamanoir.github.io/Typographos/)**
+
+- [Quick Start](https://letamanoir.github.io/Typographos/quick-start) - Get up and running in minutes
+- [Guide](https://letamanoir.github.io/Typographos/guide/basic-usage) - Comprehensive usage examples
+- [API Reference](https://letamanoir.github.io/Typographos/api/generator) - Complete method documentation
 
 ## Contributing
 
